@@ -5,6 +5,12 @@
 //2 = Card discarded
 //3 = Flop dealt, awaiting player bids
 //4 = Awaiting winning player purchase
+
+arr1 = []; arr2 = [];
+deck1 = []; deck2 = [];
+hand1 = []; hand2 = [];
+stage1 = 0;
+stage2 = 0;
 document.getElementById("newgame").addEventListener("click",startGame);
 
   //Creates the full decks for both players
@@ -57,11 +63,6 @@ function shuffle(deck) {
     }
 
 
-  //Discard one card function
-  function discardCard1 (){
-      if (stage1 = 1) {console.log("yes")}
-  }
-
 
 //Function to discard clicked card from Player1 hand
 document.querySelectorAll(".cards1").forEach(item => {
@@ -69,22 +70,28 @@ document.querySelectorAll(".cards1").forEach(item => {
     if (stage1 === 1) {
         item.className = "hidden";
         stage1 = 2;
-        displayFlop();
-
+        if (stage1 === 2 && stage2 === 2) {
+        displayFlop ();
       }
-  })
-})
-
-//Function to discard clicked card from Player2 hand
-document.querySelectorAll(".cards2").forEach(item => {
-  item.addEventListener("click", event => {
-    if (stage2 === 1) {
-        item.className = "hidden";
-        stage2 = 2;
-        displayFlop();
     }
   })
 })
+
+   //Function to discard clicked card from Player2 hand
+   document.querySelectorAll(".cards2").forEach(item => {
+    item.addEventListener("click", event => {
+      if (stage2 === 1) {
+          item.className = "hidden";
+          stage2 = 2;
+          if (stage1 === 2 && stage2 === 2) {
+            displayFlop ();
+          }
+        
+      }
+    })
+  })
+
+
 
 
   //Display flop
@@ -94,13 +101,14 @@ document.querySelectorAll(".cards2").forEach(item => {
     document.getElementById("card10").innerText = deck1[1];
     deck1.shift();
     deck1.shift();
-
     document.getElementById("card11").innerText = deck2[0];
     document.getElementById("card12").innerText = deck2[1];
     deck2.shift();
     deck2.shift();
     document.getElementById("directions1").innerText = "Choose Bid Amount";
     document.getElementById("directions2").innerText = "Choose Bid Amount";
+    document.getElementById("ready1").className = "shown"
+    document.getElementById("ready2").className = "shown"
     stage1 = 3;
     stage2 = 3;
   } 
@@ -108,32 +116,56 @@ document.querySelectorAll(".cards2").forEach(item => {
 
   //Player 1 choose bid
       let bid1 = 0;
+      let remove1 = [];
 
       document.querySelectorAll(".cards1").forEach(item => {
         item.addEventListener("click", event => {
-          if (stage1 === 3) {
+          if (stage1 === 3 && stage2 === 3) {
               bid1 += parseInt(item.innerText)
+              remove1.push(item.id);
+              console.log("bid increase1 ran")
             }
         })
       })
 
 //Player 2 choose bid
       let bid2 = 0;
+      let remove2 = [];
       document.querySelectorAll(".cards2").forEach(item => {
         item.addEventListener("click", event => {
-          if (stage2 === 3) {
+          if (stage2 === 3 && stage1 === 3) {
               bid2 += parseInt(item.innerText)
+              remove2.push(item.id);
+              console.log("bid increase2 ran")
             }
         })
       })
+
   
+//Compare bids
+document.getElementById("ready1").addEventListener("click", player1bid);
+document.getElementById("ready2").addEventListener("click", player2bid);
 
+function player1bid (){
+  stage1 = 4;
+  console.log("player1bid ran")
+  if (stage1 === 4 && stage2 === 4) {
+    if (bid1 > bid2) {console.log("player 1 wins1")}
+    if (bid2 > bid1) {console.log("player 2 wins1")}
+    if (bid1 === bid2) {console.log("It's a draw1")}
+  }
+}
 
-arr1 = []; arr2 = [];
-deck1 = []; deck2 = [];
-hand1 = []; hand2 = [];
-stage1 = 0;
-stage2 = 0;
+function player2bid (){
+  stage2 = 4;
+  console.log("player2bid ran")
+  if (stage1 === 4 && stage2 === 4) {
+    if (bid1 > bid2) {console.log("player 1 wins2")}
+    if (bid2 > bid1) {console.log("player 2 wins2")}
+    if (bid1 === bid2) {console.log("It's a draw2")}
+  }
+}
+
 
 function startGame () {
     document.getElementById("newgame").className= "hidden";
@@ -150,12 +182,12 @@ function startGame () {
     displayHands();
     
 
-    console.log(arr1);
-    console.log(arr2);
-    console.log(deck1);
-    console.log(deck2);
-    console.log(hand1);
-    console.log(hand2);
+    //console.log(arr1);
+    //console.log(arr2);
+    //console.log(deck1);
+    //console.log(deck2);
+    //console.log(hand1);
+    //console.log(hand2);
        
 }
 
