@@ -2,6 +2,12 @@
     display: none;
 }
 
+.center {
+    text-align: center;
+    font-size: 22px;
+    margin: 10px;
+}
+
 #screen {
 display: flex;
 justify-content: space-between;
@@ -43,8 +49,34 @@ justify-content: space-between;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100px;
-    height: 180px;
+    width: 80px;
+    height: 120px;
+    margin:15px 5px;
+    border:  2px solid black;
+    border-radius: 10px;
+    color: black;
+    font-size: 40px;
+}
+
+.specialcards1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 110px;
+    margin:15px 5px;
+    border:  2px solid black;
+    border-radius: 10px;
+    color: black;
+    font-size: 40px;
+}
+
+.shopcards1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 70px;
+    height: 110px;
     margin:15px 5px;
     border:  2px solid black;
     border-radius: 10px;
@@ -56,8 +88,8 @@ justify-content: space-between;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 100px;
-    height: 180px;
+    width: 70px;
+    height: 110px;
     margin:15px 5px;
     border: 2px solid red;
     color: red;
@@ -65,3 +97,33 @@ justify-content: space-between;
     font-size: 40px;
 }
 
+#flopcontainer {
+    display: flex;
+    align-items: flex-end;
+}
+
+.flop1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 190px;
+    margin:15px 5px;
+    border:  2px solid black;
+    border-radius: 10px;
+    color: black;
+    font-size: 40px;
+}
+
+.flop2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 190px;
+    margin:15px 5px;
+    border:  2px solid red;
+    border-radius: 10px;
+    color: red;
+    font-size: 40px;
+}
