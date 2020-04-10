@@ -1,0 +1,67 @@
+.hidden {
+    display: none;
+}
+
+#screen {
+display: flex;
+justify-content: space-between;
+}
+
+#player1 {
+    display: flex;
+    margin: 0px 20px;
+    flex-direction: column;
+}
+
+#player2 {
+    display: flex;
+    margin: 0px 20px;
+    flex-direction: column;
+}
+
+#directions1 {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#directions2 {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#hand1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#hand2 {
+    display: flex;
+}
+
+.cards1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 180px;
+    margin:15px 5px;
+    border:  2px solid black;
+    border-radius: 10px;
+    color: black;
+    font-size: 40px;
+}
+
+.cards2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 180px;
+    margin:15px 5px;
+    border: 2px solid red;
+    color: red;
+    border-radius: 10px;
+    font-size: 40px;
+}
+
