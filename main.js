@@ -16,6 +16,10 @@ stage1 = 0;
 stage2 = 0;
 value1 = 0;
 value2 = 0;
+buys1 = 1;
+buys2 = 1;
+
+
 document.getElementById("newgame").addEventListener("click",startGame);
 
 //function to start game
@@ -33,7 +37,10 @@ function startGame () {
   dealHand(deck2, hand2)
   displayHands();
   displayShop();
+  document.getElementById("directions1").innerText = "Click a card to discard";
+  document.getElementById("directions2").innerText = "Click a card to discard";
 }
+
   //Creates the full decks for both players
 function createFullDecks() {
     for (let i = 1; i < 5; i++) {
@@ -91,6 +98,15 @@ function displayShop () {
   if (countInDeck(arr1, "Combine") > 0) {document.getElementById("sh6").innerText = "Combine";document.getElementById("sh6b").innerText = "💰: 10";document.getElementById("sh6t").innerText = "#: " + (countInDeck(arr1, "Combine"))}
   if (countInDeck(arr1, "Buy") > 0) {document.getElementById("sh7").innerText = "Buy";document.getElementById("sh7b").innerText = "💰: 12";document.getElementById("sh7t").innerText = "#: " + (countInDeck(arr1, "Buy"))}
   if (countInDeck(arr1, "Increase") > 0) {document.getElementById("sh8").innerText = "Increase";document.getElementById("sh8b").innerText = "💰: 12";document.getElementById("sh8t").innerText = "#: " + (countInDeck(arr1, "Increase"))}
+
+  if (countInDeck(arr2, "4") > 0) {document.getElementById("redsh1").innerText = "4";document.getElementById("redsh1b").innerText = "💰: 6";document.getElementById("redsh1t").innerText = "#: " + (countInDeck(arr2, "4"))}
+  if (countInDeck(arr2, "6") > 0) {document.getElementById("redsh2").innerText = "6";document.getElementById("redsh2b").innerText = "💰: 10";document.getElementById("redsh2t").innerText = "#: " + (countInDeck(arr2, "6"))}
+  if (countInDeck(arr2, "8") > 0) {document.getElementById("redsh3").innerText = "8";document.getElementById("redsh3b").innerText = "💰: 20";document.getElementById("redsh3t").innerText = "#: " + (countInDeck(arr2, "8"))}
+  if (countInDeck(arr2, "Grab") > 0) {document.getElementById("redsh4").innerText = "Grab";document.getElementById("redsh4b").innerText = "💰: 8";document.getElementById("redsh4t").innerText = "#: " + (countInDeck(arr2, "Grab"))}
+  if (countInDeck(arr2, "Double") > 0) {document.getElementById("redsh5").innerText = "Double";document.getElementById("redsh5b").innerText = "💰: 8";document.getElementById("redsh5t").innerText = "#: " + (countInDeck(arr2, "Double"))}
+  if (countInDeck(arr2, "Combine") > 0) {document.getElementById("redsh6").innerText = "Combine";document.getElementById("redsh6b").innerText = "💰: 10";document.getElementById("redsh6t").innerText = "#: " + (countInDeck(arr2, "Combine"))}
+  if (countInDeck(arr2, "Buy") > 0) {document.getElementById("redsh7").innerText = "Buy";document.getElementById("redsh7b").innerText = "💰: 12";document.getElementById("redsh7t").innerText = "#: " + (countInDeck(arr2, "Buy"))}
+  if (countInDeck(arr2, "Increase") > 0) {document.getElementById("redsh8").innerText = "Increase";document.getElementById("redsh8b").innerText = "💰: 12";document.getElementById("redsh8t").innerText = "#: " + (countInDeck(arr2, "Increase"))}
 }
 
 
@@ -161,7 +177,7 @@ document.querySelectorAll(".cards1").forEach(item => {
     
   })
 
-  //Display initial flop
+  //Display flop
   function displayFlop () {
   if (stage1 && stage2 === 2) {
     document.getElementById("card9").innerText = deck1[0];
@@ -215,8 +231,8 @@ document.getElementById("ready2").addEventListener("click", stage2plus1);
 document.getElementById("ready1").addEventListener("click", playerbid);
 document.getElementById("ready2").addEventListener("click", playerbid);
 
-function stage1plus1 () {stage1 = 4;console.log("check")}
-function stage2plus1 () {stage2 = 4;console.log("check2")}
+function stage1plus1 () {stage1 = 4}
+function stage2plus1 () {stage2 = 4}
 
 //remove bids from hand
 function playerbid (){
@@ -250,6 +266,21 @@ function playerbid (){
       document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop"
     }
 //reset remove arrays, call displayhands function    
-      remove1 = [];remove2 = [];displayHands ();                                                          
+      remove1 = [];remove2 = [];displayHands (); playerBuy();                                                       
   }
+}
+
+
+//Player buy round
+
+function playerBuy () {
+  if (stage1 === 5 || stage1 ===7) {
+    document.getElementsByClassName("shopcards1")[0].addEventListener("click", take4);
+  }
+}
+
+function take4 () {
+  if (value1 >= 6 && buys1 > 0){arr1.splice(arr1.indexOf("4"), 1)
+  buys -= 1;
+}
 }

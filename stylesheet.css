@@ -65,9 +65,6 @@ justify-content: space-between;
 
 #hand1 {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 154px;
 }
 
 #hand2 {
@@ -114,6 +111,35 @@ justify-content: space-between;
     font-size: 19px;
     font-weight: bold;
 }
+
+.specialcards2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 110px;
+    margin:0px 5px 20px 5px;
+    border:  2px solid red;
+    border-radius: 10px;
+    color: red;
+    font-size: 40px;
+}
+
+.shopcards2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 80px;
+    height: 110px;
+    margin:0px 5px 20px 5px;
+    border:  2px dotted red;
+    border-radius: 10px;
+    color: red;
+    font-size: 19px;
+    font-weight: bold;
+}
+
 
 #sh1, #sh2, #sh3 {
     font-size: 24px;
