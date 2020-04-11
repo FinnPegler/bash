@@ -7,17 +7,16 @@
 //4 = Comparing bids
 //5 = Buy phase
 //6 = Next flop
-arr1 = []; arr2 = [];
-deck1 = []; deck2 = [];
-hand1 = []; hand2 = [];
-discard1 = []; discard2 = [];
-stage1 = 0;
-stage2 = 0;
-value1 = 0;
-value2 = 0;
-buys1 = 10;
-buys2 = 10;
-finishCount = 0;
+let arr1 = []; let arr2 = [];
+let deck1 = []; let deck2 = [];
+let hand1 = []; let hand2 = [];
+let discard1 = []; let discard2 = [];
+let stage1 = 0; let stage2 = 0;
+let bid1 = 0; let bid2 = 0;
+let remove1 = []; let remove2 = [];
+let value1 = 0; value2 = 0;
+let buys1 = 1; let buys2 = 1;
+let finishCount = 0;
 let specialDeck1 = ["Increase"];
 let specialDeck2 = ["Increase"];
 
@@ -54,8 +53,8 @@ function createFullDecks() {
   //creates the Player Decks for both players
   function createPlayerDecks() {
     for (let i = 1; i < 7; i++) {
-        deck1.push("20");
-        deck2.push("20");
+        deck1.push("2");
+        deck2.push("2");
     }
     for (let i = 1; i < 3; i++) {
         deck1.push("4");
@@ -106,7 +105,7 @@ let cards2 = document.getElementsByClassName("cards2")
         cards2[0].className = "hidden";
 }
 
-//display all hands next
+//Display hands
 if (hand1[0]) {document.getElementById("card1").innerText = hand1[0];document.getElementById("card1").className = "cards1"}
 if (hand1[1]) {document.getElementById("card2").innerText = hand1[1];document.getElementById("card2").className = "cards1"}
 if (hand1[2]) {document.getElementById("card3").innerText = hand1[2];document.getElementById("card3").className = "cards1"}
@@ -168,6 +167,7 @@ document.querySelectorAll(".cards1").forEach(item => {
   item.addEventListener("click", event => {
     if (stage1 === 1) {
         document.getElementById("directions1").innerText = "Please wait for other player";
+        discard1.push(item.innerText);
         item.className = "hidden";
         let index = hand1.indexOf(item.innerText);    
         if (index > -1) {
@@ -186,10 +186,11 @@ document.querySelectorAll(".cards1").forEach(item => {
     item.addEventListener("click", event => {
       if (stage2 === 1) {
           document.getElementById("directions2").innerText = "Please wait for other player";
+          discard2.push(item.innerText);
           item.className = "hidden";
-        let index = hand2.indexOf(item.innerText);    
-        if (index > -1) {
-        hand2.splice(index, 1);
+          let index = hand2.indexOf(item.innerText);    
+          if (index > -1) {
+          hand2.splice(index, 1);
 }
           stage2 = 2;
           if (stage1 === 2 && stage2 === 2) {
@@ -209,17 +210,43 @@ document.querySelectorAll(".cards1").forEach(item => {
 
   //Display flop
   function displayFlop () {
-  if (stage1 && stage2 === 2) {
-    document.getElementById("card9").innerText = deck1[0];
-    document.getElementById("card10").innerText = deck1[1];
-    value1 = parseInt(deck1[0]) + parseInt(deck1[1]);
-    deck1.shift();
-    deck1.shift();
-    document.getElementById("card11").innerText = deck2[0];
-    document.getElementById("card12").innerText = deck2[1];
-    value2 = parseInt(deck2[0]) + parseInt(deck2[1]);
-    deck2.shift();
-    deck2.shift();
+    //New round - if both Decks are empty, put hand into discard pile, then shuffle discard pile and turn it into new deck.
+    if (!deck1[0] && !deck2[0]){
+      console.log("New round ran");
+      discard1.push(...hand1);
+      discard2.push(...hand2);
+      hand1 = [];
+      hand2 = [];
+      shuffle(discard1);
+      shuffle(discard2);
+      deck1 = discard1;
+      deck2 = discard2;
+      discard1 = [];
+      discard2 = [];
+      dealHand(deck1, hand1)
+      dealHand(deck2, hand2)
+      displayHands();
+      displayShop();
+      displaySpecialCards();
+      document.getElementById("directions1").innerText = "Click a card to discard";
+      document.getElementById("directions2").innerText = "Click a card to discard";
+      stage1 = 1; 
+      stage2 = 1;
+    }
+
+    if (stage1 && stage2 === 2) {
+    if (deck1[0]){document.getElementById("card9").innerText = deck1[0]}
+    if (deck1[1]){document.getElementById("card10").innerText = deck1[1]}
+    if (!deck1[0]){document.getElementById("card9").innerText = ""}
+    if (!deck1[1]){document.getElementById("card10").innerText = ""}
+    if (parseInt(deck1[0])){value1 += parseInt(deck1[0])}
+    if (parseInt(deck1[1])){value1 += parseInt(deck1[1])}  
+    if (deck2[0]){document.getElementById("card11").innerText = deck2[0]}
+    if (deck2[1]){document.getElementById("card12").innerText = deck2[1]}
+    if (!deck2[0]){document.getElementById("card11").innerText = ""}
+    if (!deck2[1]){document.getElementById("card12").innerText = ""}
+    if (parseInt(deck2[0])){value2 += parseInt(deck2[0])}
+    if (parseInt(deck2[1])){value2 += parseInt(deck2[1])}  
     document.getElementById("ready1").className = "shown"
     document.getElementById("ready2").className = "shown"
     document.getElementById("directions1").innerText = "Choose Bid Amount";
@@ -233,8 +260,7 @@ document.querySelectorAll(".cards1").forEach(item => {
   //document.getElementsByClassName("specialcards2")[1].addEventListener("click", twoplayDouble);
 
   //Player 1 choose bid
-      let bid1 = 0;
-      let remove1 = [];
+      
 
       document.querySelectorAll(".cards1").forEach(item1 => {
         item1.addEventListener("click", event => {
@@ -246,8 +272,6 @@ document.querySelectorAll(".cards1").forEach(item => {
       })
 
 //Player 2 choose bid
-      let bid2 = 0;
-      let remove2 = [];
       document.querySelectorAll(".cards2").forEach(item2 => {
         item2.addEventListener("click", event => {
           if (stage2 === 3) {
@@ -310,8 +334,8 @@ function playerbid (){
       document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop";
       document.getElementById("finished1").className = "shown";
       document.getElementById("finished2").className = "shown";
-      buys1 = 10;
-      buys2 = 10;
+      buys1 = 1;
+      buys2 = 1;
     }
 //reset remove arrays, call displayhands function, move to next stage (player buy phase)     
       remove1 = [];
@@ -348,11 +372,28 @@ function playerbid (){
   //Player buy round, events listeners for special card plays
   //document.getElementsByClassName("specialcards1")[2].addEventListener("click", playCombine);
   //document.getElementsByClassName("specialcards1")[3].addEventListener("click", playBuy);
-  //document.getElementsByClassName("specialcards1")[4].addEventListener("click", playIncrease);
+  document.getElementsByClassName("specialcards1")[4].addEventListener("click", playIncrease);
 
   //document.getElementsByClassName("specialcards2")[2].addEventListener("click", twoplayCombine);
   //document.getElementsByClassName("specialcards2")[3].addEventListener("click", twoplayBuy);
-  //document.getElementsByClassName("specialcards2")[4].addEventListener("click", twoplayIncrease);
+  document.getElementsByClassName("specialcards2")[4].addEventListener("click", twoplayIncrease);
+
+  //Increase card function
+  function playIncrease (){
+    if (stage1 = 5) {
+      if (parseInt(deck1[0])){value1 += parseInt(deck1[0])}
+      if (parseInt(deck1[1])){value1 += parseInt(deck1[1])} 
+      document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop"; 
+    }
+  }
+
+  function twoplayIncrease (){
+    if (stage2 = 5) {
+      if (parseInt(deck2[0])){value2 += parseInt(deck2[0])}
+      if (parseInt(deck2[1])){value2 += parseInt(deck2[1])} 
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop"; 
+    }
+  }
 
 
   //Function to recognize when buy round is over
@@ -365,28 +406,34 @@ function playerbid (){
     newFlop ();
   }
 
-
   function addToFinishCount2 () {
     finishCount +=1;
     document.getElementById("finished2").className = "hidden";
+  
     newFlop ();
   }
 
 
-
-  setTimeout(function(){stage1 = 3;stage2 = 3}, 100);
   //New flop function
   function newFlop () {
     if (finishCount === 2) {
       console.log("newflop ran")
+      deck1.shift();
+      deck1.shift();
+      deck2.shift();
+      deck2.shift();
       stage1 = 2;
       stage2 = 2;
+      bid1 = 0;
+      bid2 = 0;
+      value1 = 0;
+      value2 = 0;
+      finishCount = 0;
       discard1.push(document.getElementById("card9").innerText);
       discard1.push(document.getElementById("card10").innerText);
       discard2.push(document.getElementById("card11").innerText);
       discard2.push(document.getElementById("card12").innerText);
       displayFlop();
-      finishCount = 0;
     }
   }
 
