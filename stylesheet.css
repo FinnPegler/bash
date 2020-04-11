@@ -55,12 +55,11 @@ justify-content: space-between;
     margin: 15px 0px;
 }
 
-#ready1 {
-    width: 80px;
-}
-
-#ready2 {
-    width: 80px;
+#ready1, #ready2, #finished1, #finished2 {
+    width: 150px;
+    margin: auto;
+    display:block;
+    height: 40px;
 }
 
 #hand1 {
@@ -86,15 +85,17 @@ justify-content: space-between;
 
 .specialcards1 {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 60px;
+    width: 65px;
     height: 110px;
-    margin:0px 5px 20px 5px;
+    margin:0px 2px 20px 2px;
     border:  2px solid black;
     border-radius: 10px;
     color: black;
-    font-size: 40px;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .shopcards1 {
@@ -114,15 +115,17 @@ justify-content: space-between;
 
 .specialcards2 {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 60px;
+    width: 65px;
     height: 110px;
-    margin:0px 5px 20px 5px;
+    margin:0px 2px 20px 2px;
     border:  2px solid red;
     border-radius: 10px;
     color: red;
-    font-size: 40px;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 .shopcards2 {
