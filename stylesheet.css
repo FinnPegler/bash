@@ -1,15 +1,24 @@
+p {
+    margin: 0;
+    text-align: center;
+    font-size: 18px;
+}
+
+#newgame {
+    margin-bottom: 230px;
+    margin-left: auto;
+    margin-right: auto;
+    display:block;
+    width: 120px;
+    height: 30px
+}
+
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .shown {
     display: inherit;
-}
-
-.center {
-    text-align: center;
-    font-size: 22px;
-    margin: 10px;
 }
 
 #screen {
@@ -32,11 +41,18 @@ justify-content: space-between;
 #directions1 {
     font-size: 30px;
     font-weight: bold;
+    text-align: center;
+    min-height: 34.4px;
+    margin: 15px 0px;
 }
 
 #directions2 {
     font-size: 30px;
     font-weight: bold;
+    text-align: center;
+    min-height: 34.4px;
+    color: red;
+    margin: 15px 0px;
 }
 
 #ready1 {
@@ -51,6 +67,7 @@ justify-content: space-between;
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 154px;
 }
 
 #hand2 {
@@ -63,7 +80,7 @@ justify-content: space-between;
     justify-content: center;
     width: 70px;
     height: 120px;
-    margin:15px 5px;
+    margin:0px 5px 20px 5px;
     border:  2px solid black;
     border-radius: 10px;
     color: black;
@@ -76,7 +93,7 @@ justify-content: space-between;
     justify-content: center;
     width: 60px;
     height: 110px;
-    margin:15px 5px;
+    margin:0px 5px 20px 5px;
     border:  2px solid black;
     border-radius: 10px;
     color: black;
@@ -85,15 +102,21 @@ justify-content: space-between;
 
 .shopcards1 {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 60px;
+    justify-content: space-between;
+    width: 80px;
     height: 110px;
-    margin:15px 5px;
-    border:  2px solid black;
+    margin:0px 5px 20px 5px;
+    border:  2px dotted black;
     border-radius: 10px;
     color: black;
-    font-size: 40px;
+    font-size: 19px;
+    font-weight: bold;
+}
+
+#sh1, #sh2, #sh3 {
+    font-size: 24px;
 }
 
 .cards2 {
@@ -102,7 +125,7 @@ justify-content: space-between;
     justify-content: center;
     width: 70px;
     height: 120px;
-    margin:15px 5px;
+    margin:0px 5px 20px 5px;
     border: 2px solid red;
     color: red;
     border-radius: 10px;
