@@ -13,12 +13,13 @@ let hand1 = []; let hand2 = [];
 let discard1 = []; let discard2 = [];
 let stage1 = 0; let stage2 = 0;
 let bid1 = 0; let bid2 = 0;
+let multiplier1 = 1;let multiplier2 = 1;
 let remove1 = []; let remove2 = [];
 let value1 = 0; value2 = 0;
 let buys1 = 1; let buys2 = 1;
 let finishCount = 0;
-let specialDeck1 = ["Increase", "Grab", "Grab", "Grab"];
-let specialDeck2 = ["Increase", "Grab", "Grab", "Grab"];
+let specialDeck1 = ["Increase", "Increase","Increase","Grab", "Double","Double", "Buy", "Buy"];
+let specialDeck2 = ["Increase", "Increase","Increase","Grab", "Double", "Double", "Buy", "Buy"];
 
 document.getElementById("newgame").addEventListener("click",startGame);
 
@@ -185,7 +186,7 @@ function playGrab () {
       }
     }  
      
-  //Functions to take special card from deck and place in special cards (Player 1)  
+  //Grab card - Functions to take special card from deck and place in special cards (Player 1)  
   document.querySelectorAll(".flop1").forEach(item => {
     item.addEventListener("click", event => {
       if (stage1 === 3 && grab1 === 1 &&  item.innerText === ("Grab")) {
@@ -264,7 +265,7 @@ function twoplayGrab () {
       }
     }  
      
-  //Functions to take special card from deck and place in special cards (Player 2)  
+  //Grab card - Functions to take special card from deck and place in special cards (Player 2)  
   document.querySelectorAll(".flop2").forEach(item => {
     item.addEventListener("click", event => {
       if (stage2 === 3 && grab2 === 1 &&  item.innerText === ("Grab")) {
@@ -325,12 +326,6 @@ function twoplayGrab () {
       }
     })
   })
-
-
-
-
-
-
 
 
 //Function to discard clicked card from Player1 hand
@@ -446,8 +441,25 @@ document.querySelectorAll(".cards1").forEach(item => {
   }
 
   //Eventlistener for double card
-  //document.getElementsByClassName("specialcards1")[1].addEventListener("click", playDouble);
-  //document.getElementsByClassName("specialcards2")[1].addEventListener("click", twoplayDouble);
+  document.getElementsByClassName("specialcards1")[1].addEventListener("click", playDouble);
+  document.getElementsByClassName("specialcards2")[1].addEventListener("click", twoplayDouble);
+
+function playDouble (){
+  if (stage1 === 3){
+    multiplier1 = 2;
+    specialDeck1.splice(specialDeck1.indexOf("Double"), 1)
+    discard1.push("Double")
+  }
+}
+
+function twoplayDouble (){
+  if (stage1 === 3){
+    multiplier2 = 2;
+    specialDeck2.splice(specialDeck2.indexOf("Double"), 1)
+    discard2.push("Double")
+  }
+}
+
 
   //Player 1 choose bid
       document.querySelectorAll(".cards1").forEach(item1 => {
@@ -455,7 +467,6 @@ document.querySelectorAll(".cards1").forEach(item => {
           if (stage1 === 3 && item1.className === ("cards1")) {
               bid1 += parseInt(item1.innerText);
               remove1.push(item1.innerText);
-              console.log(item1);
             }
         })
       })
@@ -466,7 +477,6 @@ document.querySelectorAll(".cards1").forEach(item => {
           if (stage2 === 3 && item2.className === ("cards2")) {
               bid2 += parseInt(item2.innerText);
               remove2.push(item2.innerText);
-              console.log(item2);
             }
         })
       })
@@ -509,31 +519,34 @@ function playerbid (){
 //calculate winning bid
     if (bid1 === 0 & bid2 === 0){finishCount = 2;document.getElementById("updates").innerText= "No one bid, next flop dealt"; return newFlop();}
 
-    if (bid1 > bid2) {
+    if (bid1*multiplier1 > bid2*multiplier2) {
       stage1 = 5;stage2 = 6;
-      document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop"; 
+      document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
       document.getElementById("finished1").className = "shown"
       buys1 = 1;
       buys2 = 0;
       finishCount = 1;
+      displaySpecialCards();
     }
-    if (bid2 > bid1) {
+    if (bid2*multiplier2 > bid1*multiplier1) {
       stage2 = 5;stage1 = 6;
-      document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop"
+      document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
       document.getElementById("finished2").className = "shown"
       buys1 = 0;
       buys2 = 1;
       finishCount = 1;
+      displaySpecialCards();
     }        
       
-    if (bid1 === bid2) {
+    if (bid1*multiplier1 === bid2*multiplier2) {
       stage1 = 5; stage2 = 5;
-      document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop";
-      document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop";
+      document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
+      document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
       document.getElementById("finished1").className = "shown";
       document.getElementById("finished2").className = "shown";
       buys1 = 1;
       buys2 = 1;
+      displaySpecialCards();
     }
 //reset remove arrays, call displayhands function, move to next stage (player buy phase)     
       remove1 = [];
@@ -567,21 +580,75 @@ function playerbid (){
     document.getElementsByClassName("shopcards2")[7].addEventListener("click", twotakeIncrease);
   
 
-  //Player buy round, events listeners for special card plays
-  //document.getElementsByClassName("specialcards1")[2].addEventListener("click", playCombine);
-  //document.getElementsByClassName("specialcards1")[3].addEventListener("click", playBuy);
+  //Combine card listeners and functions
+  document.getElementsByClassName("specialcards1")[2].addEventListener("click", playCombine);
+  document.getElementsByClassName("specialcards2")[2].addEventListener("click", twoplayCombine);
+
+ function playCombine (){
+  if (stage1 === 5 && specialDeck1.indexOf("Combine") > -1) {
+  if (parseInt(deck2[0])){value1 += parseInt(deck2[0])}
+  if (parseInt(deck2[1])){value1 += parseInt(deck2[1])} 
+  document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1+" buy(s)";  
+  specialDeck1.splice(specialDeck1.indexOf("Combine"), 1)
+  discard1.push("Combine");
+  displaySpecialCards();  
+  console.log("playCombine ran")
+}
+}
+
+function twoplayCombine (){
+if (stage2 === 5 && specialDeck2.indexOf("Combine") > -1) {
+  if (parseInt(deck1[0])){value2 += parseInt(deck1[0])}
+  if (parseInt(deck1[1])){value2 += parseInt(deck1[1])} 
+  document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
+  specialDeck2.splice(specialDeck2.indexOf("Combine"), 1)
+  discard2.push("Combine");
+  displaySpecialCards();  
+  console.log("twoplayCombine ran")
+}
+}
+  
+  
+  
+  //Buy card listeners and functions
+  document.getElementsByClassName("specialcards1")[3].addEventListener("click", playBuy);
+  document.getElementsByClassName("specialcards2")[3].addEventListener("click", twoplayBuy);
+
+  function playBuy (){
+    if (stage1 === 5 && specialDeck1.indexOf("Buy") > -1) {
+    buys1 +=1;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
+    specialDeck1.splice(specialDeck1.indexOf("Buy"), 1)
+    discard1.push("Buy");
+    displaySpecialCards();  
+    console.log("playBuy ran")
+  }
+  }
+  
+  
+  function twoplayBuy (){
+  if (stage2 === 5 && specialDeck2.indexOf("Buy") > -1) {
+    buys2 += 1;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
+    specialDeck2.splice(specialDeck2.indexOf("Buy"), 1)
+    discard2.push("Buy");
+    displaySpecialCards();  
+    console.log("twoplayBuy ran")
+  }
+  }
+
+
+
+
+  //Increase card listeners and functions
   document.getElementsByClassName("specialcards1")[4].addEventListener("click", playIncrease);
-
-  //document.getElementsByClassName("specialcards2")[2].addEventListener("click", twoplayCombine);
-  //document.getElementsByClassName("specialcards2")[3].addEventListener("click", twoplayBuy);
   document.getElementsByClassName("specialcards2")[4].addEventListener("click", twoplayIncrease);
-
-  //Increase card function
+  
   function playIncrease (){
       if (stage1 === 5 && specialDeck1.indexOf("Increase") > -1) {
       if (parseInt(deck1[0])){value1 += parseInt(deck1[0])}
       if (parseInt(deck1[1])){value1 += parseInt(deck1[1])} 
-      document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop"; 
+      document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
       specialDeck1.splice(specialDeck1.indexOf("Increase"), 1)
       discard1.push("Increase");
       displaySpecialCards();  
@@ -594,7 +661,7 @@ function playerbid (){
     if (stage2 === 5 && specialDeck2.indexOf("Increase") > -1) {
       if (parseInt(deck2[0])){value2 += parseInt(deck2[0])}
       if (parseInt(deck2[1])){value2 += parseInt(deck2[1])} 
-      document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop"; 
+      document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
       specialDeck2.splice(specialDeck2.indexOf("Increase"), 1)
       discard2.push("Increase");
       displaySpecialCards();  
@@ -628,12 +695,10 @@ function playerbid (){
       deck1.shift();
       deck2.shift();
       deck2.shift();
-      stage1 = 2;
-      stage2 = 2;
-      bid1 = 0;
-      bid2 = 0;
-      value1 = 0;
-      value2 = 0;
+      stage1 = 2;stage2 = 2;
+      bid1 = 0;bid2 = 0;
+      multiplier1 = 1;multiplier2 = 1;
+      value1 = 0;value2 = 0;
       finishCount = 0;
       discard1.push(document.getElementById("card9").innerText);
       discard1.push(document.getElementById("card10").innerText);
@@ -655,6 +720,7 @@ function take4 () {
     discard1.push("4")
     buys1 -= 1;
     value1 -= 6;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
 }
 }
@@ -665,6 +731,7 @@ function take6 () {
     discard1.push("6")
     buys1 -= 1;
     value1 -= 10;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
 
 }
@@ -676,6 +743,7 @@ function take8 () {
     discard1.push("8")
     buys1 -= 1;
     value1 -= 20;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
 }
 }
@@ -686,6 +754,7 @@ function takeGrab () {
     specialDeck1.push("Grab")
     buys1 -= 1;
     value1 -= 8;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
     displaySpecialCards();
 }
@@ -697,6 +766,7 @@ function takeDouble () {
     specialDeck1.push("Double")
     buys1 -= 1;
     value1 -= 8;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
     displaySpecialCards();
 }
@@ -708,6 +778,7 @@ function takeCombine () {
     specialDeck1.push("Combine")
     buys1 -= 1;
     value1 -= 10;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
     displaySpecialCards();
 }
@@ -719,6 +790,7 @@ function takeBuy () {
     specialDeck1.push("Buy")
     buys1 -= 1;
     value1 -= 12;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
     displaySpecialCards();
 }
@@ -730,6 +802,7 @@ function takeIncrease () {
     specialDeck1.push("Increase")
     buys1 -= 1;
     value1 -= 12;
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
     displaySpecialCards();
 }
@@ -744,6 +817,7 @@ function twotake4 () {
     discard2.push("4")
     buys2 -= 1;
     value2 -= 6;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
 }
 }
@@ -754,6 +828,7 @@ function twotake6 () {
     discard2.push("6")
     buys2 -= 1;
     value2 -= 10;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
 
 }
@@ -765,6 +840,7 @@ function twotake8 () {
     discard2.push("8")
     buys2 -= 1;
     value2 -= 20;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
 }
 }
@@ -775,6 +851,7 @@ function twotakeGrab () {
     specialDeck2.push("Grab")
     buys2 -= 1;
     value2 -= 8;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
     displaySpecialCards();
 }
@@ -786,6 +863,7 @@ function twotakeDouble () {
     specialDeck2.push("Double")
     buys2 -= 1;
     value2 -= 8;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
     displaySpecialCards();
 }
@@ -797,6 +875,7 @@ function twotakeCombine () {
     specialDeck2.push("Combine")
     buys2 -= 1;
     value2 -= 10;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
     displaySpecialCards();
 }
@@ -808,6 +887,7 @@ function twotakeBuy () {
     specialDeck2.push("Buy")
     buys2 -= 1;
     value2 -= 12;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
     displaySpecialCards();
 }
@@ -819,6 +899,7 @@ function twotakeIncrease () {
     specialDeck2.push("Increase")
     buys2 -= 1;
     value2 -= 12;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
     displaySpecialCards();
 }

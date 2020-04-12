@@ -70,31 +70,19 @@ justify-content: space-between;
     display: flex;
 }
 
-.cards1 {
+.cards1, .cards1bidded {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 70px;
+    width: 75px;
     height: 120px;
     margin:0px 5px 20px 5px;
     border:  2px solid black;
     border-radius: 10px;
     color: black;
-    font-size: 40px;
+    font-size: 20px;
 }
 
-.cards1bidded {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 70px;
-    height: 120px;
-    margin:0px 5px 20px 5px;
-    border:  2px solid black;
-    border-radius: 10px;
-    color: black;
-    font-size: 40px;
-}
 
 .specialcards1 {
     display: flex;
@@ -161,31 +149,19 @@ justify-content: space-between;
     font-size: 24px;
 }
 
-.cards2 {
+.cards2, .cards2bidded {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 70px;
+    width: 75px;
     height: 120px;
     margin:0px 5px 20px 5px;
     border: 2px solid red;
     color: red;
     border-radius: 10px;
-    font-size: 40px;
+    font-size: 20px;
 }
 
-.cards2bidded {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 70px;
-    height: 120px;
-    margin:0px 5px 20px 5px;
-    border: 2px solid red;
-    color: red;
-    border-radius: 10px;
-    font-size: 40px;
-}
 
 #flopcontainer {
     display: flex;
@@ -196,9 +172,9 @@ justify-content: space-between;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
+    width: 72px;
     height: 190px;
-    margin:15px 5px;
+    margin:15px 1px;
     border:  2px solid black;
     border-radius: 10px;
     color: black;
@@ -209,9 +185,9 @@ justify-content: space-between;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
+    width: 72px;
     height: 190px;
-    margin:15px 5px;
+    margin:15px 1px;
     border:  2px solid red;
     border-radius: 10px;
     color: red;
