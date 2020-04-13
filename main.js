@@ -18,8 +18,8 @@ let remove1 = []; let remove2 = [];
 let value1 = 0; value2 = 0;
 let buys1 = 1; let buys2 = 1;
 let finishCount = 0;
-let specialDeck1 = ["Increase", "Increase","Increase","Grab", "Double","Double", "Buy", "Buy"];
-let specialDeck2 = ["Increase", "Increase","Increase","Grab", "Double", "Double", "Buy", "Buy"];
+let specialDeck1 = ["Increase", "Grab", "Double","Combine", "Buy"];
+let specialDeck2 = ["Increase", "Grab", "Double", "Combine", "Buy"];
 
 document.getElementById("newgame").addEventListener("click",startGame);
 
@@ -44,7 +44,7 @@ function startGame () {
 }
 
   //Creates the full decks for both players
-function createFullDecks() {
+function createFullDecks() {``
     for (let i = 1; i < 5; i++) {
         arr1.push("4");arr1.push("6");arr1.push("8");arr1.push("Grab");arr1.push("Buy");arr1.push("Double");arr1.push("Combine");arr1.push("Increase");
         arr2.push("4");arr2.push("6");arr2.push("8");arr2.push("Grab");arr2.push("Buy");arr2.push("Double");arr2.push("Combine");arr2.push("Increase");
@@ -61,16 +61,6 @@ function createFullDecks() {
     for (let i = 1; i < 3; i++) {
         deck1.push("4");
         deck2.push("4");
-        deck1.push("Increase");
-        deck1.push("Grab");
-        deck1.push("Combine");
-        deck1.push("Double");
-        deck1.push("Buy"); 
-        deck2.push("Increase");
-        deck2.push("Grab");
-        deck2.push("Combine");
-        deck2.push("Double");
-        deck2.push("Buy");
     }
   }
 
@@ -186,7 +176,7 @@ function playGrab () {
       }
     }  
      
-  //Grab card - Functions to take special card from deck and place in special cards (Player 1)  
+  //Grab card - Functions to take special card from flop and place in special cards (Player 1)  
   document.querySelectorAll(".flop1").forEach(item => {
     item.addEventListener("click", event => {
       if (stage1 === 3 && grab1 === 1 &&  item.innerText === ("Grab")) {
@@ -341,11 +331,14 @@ document.querySelectorAll(".cards1").forEach(item => {
 }
         stage1 = 2;
         if (stage1 === 2 && stage2 === 2) {
+        takeSpecials();
         displayFlop ();
       }
     }
   })
 })
+
+
 
    //Function to discard clicked card from Player2 hand
    document.querySelectorAll(".cards2").forEach(item => {
@@ -360,6 +353,7 @@ document.querySelectorAll(".cards1").forEach(item => {
 }
           stage2 = 2;
           if (stage1 === 2 && stage2 === 2) {
+            takeSpecials();
             displayFlop ();
           }
         
@@ -367,6 +361,34 @@ document.querySelectorAll(".cards1").forEach(item => {
     })
     
   })
+
+  //function to take special cards from hand and into special deck
+function takeSpecials () {
+  document.querySelectorAll(".cards1").forEach(item => {
+    if (stage1 === 2 && stage2 === 2) {
+      if (item.innerText === "Grab" || item.innerText === "Double"|| item.innerText === "Combine"|| item.innerText === "Buy" || item.innerText === "Increase"){
+        specialDeck1.push(item.innerText);
+        item.className = "hidden";
+        let index = hand1.indexOf(item.innerText);    
+        hand1.splice(index, 1);
+
+      }
+    }
+  })
+
+  document.querySelectorAll(".cards2").forEach(item => {
+    if (stage1 === 2 && stage2 === 2) {
+      if (item.innerText === "Grab" || item.innerText === "Double"|| item.innerText === "Combine"|| item.innerText === "Buy" || item.innerText === "Increase"){
+        specialDeck2.push(item.innerText);
+        item.className = "hidden";
+        let index = hand2.indexOf(item.innerText);    
+        hand2.splice(index, 1);
+
+      }
+    }
+  })
+  displaySpecialCards();
+}
 
 
   //Display flop
@@ -879,6 +901,7 @@ function twotakeCombine () {
     displayShop();
     displaySpecialCards();
 }
+
 }
 
 function twotakeBuy () {
