@@ -1,0 +1,30 @@
+{
+  "name": "bash",
+  "version": "1.0.0",
+  "description": "Two player card game",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FinnPegler/bash.git"
+  },
+  "keywords": [
+    "card",
+    "game",
+    "fun",
+    "2-player"
+  ],
+  "author": "Finn Pegler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/FinnPegler/bash/issues"
+  },
+  "homepage": "https://github.com/FinnPegler/bash#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
+}
