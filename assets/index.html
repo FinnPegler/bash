@@ -1,19 +1,95 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>Bash Homepage</title>
-        <link href="/style.css" rel="stylesheet" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
-        
-    </head>
-    <body>
-        <h1>Bash, a 2-player card game</h1>
-        <button id = "start">Click to start new game</button><br><br>
-        <a href="/player1.html" target = "blank">Player 1 click here</a><br><br>
-        <a href="/player2.html" target = "blank">Player 2 click here</a>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+    <link href="https://fonts.googleapis.com/css?family=Bree+Serif|Open+Sans&display=swap" rel="stylesheet">
+    <title>Bash - a 2-player card game</title>
+</head>
+<body>
+<div id = "screen">
+<div id = "player1">
+<p id = "directions1"></p><button class = "hidden" id = "ready1">Ready</button><button class = "hidden" id = "finished1">Finished Buying</button>
+<p class = "center">Player 1 Hand</p>
+<div id = "hand1">
+    <div class = "cards1" id = "card1"></div>
+    <div class = "cards1" id = "card2"></div>
+    <div class = "cards1" id = "card3"></div>
+    <div class = "cards1" id = "card4"></div>
+</div>
+<p class = "center">Player 1 Special Cards</p>
+<div id = "hand1">
+    <div class = "specialcards1"><div id = "sc1t"></div><div id = "sc1"></div></div>
+    <div class = "specialcards1"><div id = "sc2t"></div><div id = "sc2"></div></div>
+    <div class = "specialcards1"><div id = "sc3t"></div><div id = "sc3"></div></div>
+    <div class = "specialcards1"><div id = "sc4t"></div><div id = "sc4"></div></div>
+    <div class = "specialcards1"><div id = "sc5t"></div><div id = "sc5"></div></div>
+</div>
+<p class = "center">Player 1 Shop</p>
+<div id = "hand1">
+    <div class = "shopcards1"><div id = "sh1t"></div><div id = "sh1"></div><div id = "sh1b"></div></div>
+    <div class = "shopcards1"><div id = "sh2t"></div><div id = "sh2"></div><div id = "sh2b"></div></div>
+    <div class = "shopcards1"><div id = "sh3t"></div><div id = "sh3"></div><div id = "sh3b"></div></div>
+    <div class = "shopcards1"><div id = "sh4t"></div><div id = "sh4"></div><div id = "sh4b"></div></div>
+</div>
+<div id = "hand1">
+    <div class = "shopcards1"><div id = "sh5t"></div><div id = "sh5"></div><div id = "sh5b"></div></div>
+    <div class = "shopcards1"><div id = "sh6t"></div><div id = "sh6"></div><div id = "sh6b"></div></div>
+    <div class = "shopcards1"><div id = "sh7t"></div><div id = "sh7"></div><div id = "sh7b"></div></div>
+    <div class = "shopcards1"><div id = "sh8t"></div><div id = "sh8"></div><div id = "sh8b"></div></div>
+</div>
+</div>
+
+<div>    
+<h1 id = "updates">Bash: A 2-player card game</h1>
+<button id = "newgame">New Game</button>
+    <div id = "flopcontainer">
+        <div class = "flop1" id = "card9"></div>
+        <div class = "flop1" id = "card10"></div>
+        <div class = "flop2" id = "card11"></div>
+        <div class = "flop2" id = "card12"></div>
+    </div>
+</div>
 
 
-        <script src="/client.js"></script>
-    </body>
+<div id = "player2">
+<p id = "directions2"></p><button class = "hidden" id = "ready2">Ready</button><button class = "hidden" id = "finished2">Finished Buying</button>
+<p class = "center">Player 2 Hand</p>
+<div id = "hand2">
+    <div class = "cards2" id = "card5"></div>
+    <div class = "cards2" id = "card6"></div>
+    <div class = "cards2" id = "card7"></div>
+    <div class = "cards2" id = "card8"></div>
+</div>
+<p class = "center">Player 2 Special Cards</p>
+<div id = "hand2">
+    <div class = "specialcards2"><div id = "redsc1t"></div><div id = "redsc1"></div></div>
+    <div class = "specialcards2"><div id = "redsc2t"></div><div id = "redsc2"></div></div>
+    <div class = "specialcards2"><div id = "redsc3t"></div><div id = "redsc3"></div></div>
+    <div class = "specialcards2"><div id = "redsc4t"></div><div id = "redsc4"></div></div>
+    <div class = "specialcards2"><div id = "redsc5t"></div><div id = "redsc5"></div></div>
+</div>
+<p class = "center">Player 2 Shop</p>
+<div id = "hand2">
+    <div class = "shopcards2"><div id = "redsh1t"></div><div id = "redsh1"></div><div id = "redsh1b"></div></div>
+    <div class = "shopcards2"><div id = "redsh2t"></div><div id = "redsh2"></div><div id = "redsh2b"></div></div>
+    <div class = "shopcards2"><div id = "redsh3t"></div><div id = "redsh3"></div><div id = "redsh3b"></div></div>
+    <div class = "shopcards2"><div id = "redsh4t"></div><div id = "redsh4"></div><div id = "redsh4b"></div></div>
+</div>
+<div id = "hand2">
+    <div class = "shopcards2"><div id = "redsh5t"></div><div id = "redsh5"></div><div id = "redsh5b"></div></div>
+    <div class = "shopcards2"><div id = "redsh6t"></div><div id = "redsh6"></div><div id = "redsh6b"></div></div>
+    <div class = "shopcards2"><div id = "redsh7t"></div><div id = "redsh7"></div><div id = "redsh7b"></div></div>
+    <div class = "shopcards2"><div id = "redsh8t"></div><div id = "redsh8"></div><div id = "redsh8b"></div></div>
+</div>
+
+</div>
+
+
+</div>
+<script src="/client.js"></script>
+</body>
 </html>
