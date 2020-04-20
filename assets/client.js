@@ -7,6 +7,7 @@ let arr1 = [];
 let deck1 = []; 
 let hand1 = []; 
 let discard1 = [];
+let value1 = 0;
 let specialDeck1 = ["Increase", "Grab", "Double","Combine", "Buy"];
 
 
@@ -37,8 +38,9 @@ function addSendStage1 (){
 
 socket.on("stage2", function(data){
     stage2 = data.stage2;
-    console.log(data);
-    console.log("socket of stage2 came through");
+    if (stage1 === 2){
+        secondStage();
+    }
 })
 
   //Shuffle function
@@ -125,13 +127,16 @@ document.querySelectorAll(".cards1").forEach(item => {
           addSendStage1(); 
   }
           if (stage1 === 2 && stage2 === 2) {  
-          takeSpecials();
-          console.log("takespecials should have run")
-          //displayFlop ();
+            secondStage();
         }
       }
     })
   })
+
+  function secondStage(){
+    takeSpecials();
+    //displayFlop ();
+}
 
   
   //function to take special cards from hand and put in special deck
@@ -148,3 +153,42 @@ document.querySelectorAll(".cards1").forEach(item => {
     })
     displaySpecialCards();
 }
+
+
+//display flop
+if (stage1 && stage2 === 2) {
+    {document.getElementById("card9").className = "flop1"}
+    {document.getElementById("card10").className = "flop1"}
+    {document.getElementById("card11").className = "flop2"}
+    {document.getElementById("card12").className = "flop2"}
+  if (deck1[0]){document.getElementById("card9").innerText = deck1[0]}
+  if (deck1[1]){document.getElementById("card10").innerText = deck1[1]}
+  if (!deck1[0]){document.getElementById("card9").className = "hidden"}
+  if (!deck1[1]){document.getElementById("card10").className = "hidden"}
+  if (parseInt(deck1[0])){value1 += parseInt(deck1[0])}
+  if (parseInt(deck1[1])){value1 += parseInt(deck1[1])}  
+  if (deck2[0]){document.getElementById("card11").innerText = deck2[0]}
+  if (deck2[1]){document.getElementById("card12").innerText = deck2[1]}
+  if (!deck2[0]){document.getElementById("card11").className = "hidden"}
+  if (!deck2[1]){document.getElementById("card12").className = "hidden"}
+  if (parseInt(deck2[0])){value2 += parseInt(deck2[0])}
+  if (parseInt(deck2[1])){value2 += parseInt(deck2[1])}  
+  
+  if (hand1[0]) {
+    document.getElementById("ready1").className = "shown"
+    document.getElementById("directions1").innerText = "Choose Bid Amount";
+    document.getElementById("updates").innerText= "New flop dealt"
+  }
+
+  if (!hand1[0]) {document.getElementById("directions1").innerText = "Your hand is empty, you cannot bid";}
+
+  if (hand2[0]) {
+    document.getElementById("directions2").innerText = "Choose Bid Amount";
+    document.getElementById("ready2").className = "shown"
+    document.getElementById("updates").innerText= "New flop dealt"
+  }
+
+  if (!hand2[0]) {document.getElementById("directions2").innerText = "Your hand is empty, you cannot bid";}
+
+  setTimeout(function(){stage1 = 3;stage2 = 3}, 1000);
+} 
