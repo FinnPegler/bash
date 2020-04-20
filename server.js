@@ -18,8 +18,20 @@ var io = socket(server);
 
 io.on("connection", function (socket){
     console.log("made socket connection", socket.id);
-    //socket.on("start", startGame);
+
     socket.on("start", function(data){
     io.sockets.emit("startResponse");
   })
+
+    socket.on("stage2", function (data){
+      console.log("server recieved stage2")
+      io.sockets.emit("stage2", data);
+    })
+
+    socket.on("stage1", function (data){
+      console.log("server recieved stage1")
+      io.sockets.emit("stage1", data);
+    })
+
 })
+
