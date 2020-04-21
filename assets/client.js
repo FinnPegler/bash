@@ -70,7 +70,7 @@ socket.on("stage2", function(data){
 socket.on("deck2", function(data){
     deck2[0] = data.deck2[0];
     deck2[1] = data.deck2[1];
-    setTimeout(decksReceived, 2000);
+    setTimeout(decksReceived, 200);
 })
 
 //bid received through server
@@ -215,7 +215,7 @@ document.querySelectorAll(".cards1").forEach(item => {
 //display flop
 function displayFlop(){
 if (stage1 === 2 && stage2 === 2) {
-    console.log("display flop1 ran")
+  console.log("display flop1 ran")
   document.getElementById("card9").className = "flop1"
   document.getElementById("card10").className = "flop1"
   document.getElementById("card11").className = "flop2"
@@ -228,8 +228,8 @@ if (stage1 === 2 && stage2 === 2) {
   if (parseInt(deck1[1])){value1 += parseInt(deck1[1])}  
   if (deck2[0]){document.getElementById("card11").innerText = deck2[0]}
   if (deck2[1]){document.getElementById("card12").innerText = deck2[1]}
-  //if (!deck2[0]){document.getElementById("card11").className = "hidden"}
-  //if (!deck2[1]){document.getElementById("card12").className = "hidden"}
+  if (!deck2[0]){document.getElementById("card11").className = "hidden"}
+  if (!deck2[1]){document.getElementById("card12").className = "hidden"}
   
   if (hand1[0]) {
     document.getElementById("ready1").className = "shown"
@@ -456,7 +456,6 @@ function take4 () {
       }) 
       console.log(deck1);
       stage1 = 6;
-      if (!deck1[0] && !deck2[0]){newRound}
       setTimeout(decksReceived, 500)
     }
   }
@@ -468,9 +467,6 @@ function take4 () {
     } 
 }
 
-function newRound (){
-    console.log("new Round")
-}
 
 socket.on("newRound", function(data){
     newRoundCounter += 1;
@@ -479,3 +475,30 @@ socket.on("newRound", function(data){
         newRoundCounter = 0;
     }
 })
+
+
+function newRound (){
+      document.getElementById("updates").innerText= "Round over, decks shuffled and new round started"
+      {document.getElementById("card9").className = "hidden"}
+      {document.getElementById("card10").className = "hidden"}
+      {document.getElementById("card11").className = "hidden"}
+      {document.getElementById("card12").className = "hidden"}
+      console.log("New round ran");
+      discard1.push(...hand1);
+      var filtered = discard1.filter(function (el) {
+        return el != null;
+      });
+      discard1 = filtered;
+      hand1 = [];
+      shuffle(discard1);
+      deck1 = discard1;
+      discard1 = [];
+      dealHand(deck1, hand1)
+      displayHand();
+      displayShop();
+      displaySpecialCards();
+      document.getElementById("directions1").innerText = "Click a card to discard";
+      document.getElementById("ready1").className = "hidden";
+      stage1 = 1; 
+      stage2 = 1;
+    }
