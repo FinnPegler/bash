@@ -311,9 +311,11 @@ document.querySelectorAll(".cards2").forEach(item => {
     })
   })
 
+
+
+    //function to move stage2 to 4 and send stage and hand data, then run player bid
   document.getElementById("ready2").addEventListener("click", stage2plus1);
 
-  //function to move stage2 to 4 and send stage and hand data, then run player bid
   function stage2plus1 () {
     document.querySelectorAll(".cards2dark").forEach(item => {
       item.className = "cards2"})
@@ -352,6 +354,14 @@ if (bid2*multiplier2 > bid1*multiplier1) {
   document.getElementById("updates").innerText= " "; 
   document.getElementById("finished2").className = "shown";
   buys2 = 1;
+  document.querySelectorAll(".flop2").forEach(item => {
+    if (item.innerText === "Grab" ||item.innerText === "Double" ||item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
+           deck2.splice(deck2.indexOf(item.innerText), 1);
+           specialDeck2.push(item.innerText);
+           item.className = "hidden";
+           console.log(`Grabbed ${item.innerText} Card`);
+    }
+   })
   displaySpecialCards();
 }
 
@@ -361,6 +371,14 @@ if (bid2*multiplier2 === bid1*multiplier1) {
   document.getElementById("updates").innerText= " "; 
   document.getElementById("finished2").className = "shown";
   buys2 = 1;
+  document.querySelectorAll(".flop2").forEach(item => {
+    if (item.innerText === "Grab" ||item.innerText === "Double" || item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
+           deck2.splice(deck2.indexOf(item.innerText), 1);
+           specialDeck2.push(item.innerText);
+           item.className = "hidden";
+           console.log(`Grabbed ${item.innerText} Card`);
+    }
+  })
   displaySpecialCards();
 }
 
@@ -401,6 +419,39 @@ if (stage2 === 5 && specialDeck2.indexOf("Combine") > -1) {
   console.log("playCombine2 ran")
 }
 }
+
+
+  //Increase card listeners and functions
+  document.getElementsByClassName("specialcards2")[4].addEventListener("click", playIncrease);
+
+  function playIncrease (){
+    if (stage2 === 5 && specialDeck2.indexOf("Increase") > -1) {
+      if (parseInt(deck2[0])){value2 += parseInt(deck2[0])}
+      if (parseInt(deck2[1])){value2 += parseInt(deck2[1])} 
+      document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
+      specialDeck2.splice(specialDeck2.indexOf("Increase"), 1)
+      discard2.push("Increase");
+      displaySpecialCards();  
+      console.log("twoplayIncrease ran")
+    }
+  }
+
+
+  //Buy card listeners and functions
+  document.getElementsByClassName("specialcards2")[3].addEventListener("click", playBuy);
+
+  function playBuy (){
+  if (stage2 === 5 && specialDeck2.indexOf("Buy") > -1) {
+    buys2 += 1;
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
+    specialDeck2.splice(specialDeck2.indexOf("Buy"), 1)
+    discard2.push("Buy");
+    displaySpecialCards();  
+    console.log("playBuy2 ran")
+  }
+  }
+
+
 
   //Functions to recognize when buy round is over
   document.getElementById("finished2").addEventListener("click", sendFinish)

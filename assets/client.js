@@ -378,6 +378,14 @@ function playerbid (){
       document.getElementById("finished1").className = "shown";
       document.getElementById("updates").innerText= " "; 
       buys1 = 1;
+      document.querySelectorAll(".flop1").forEach(item => {
+          if (item.innerText === "Grab" ||item.innerText === "Double" ||item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
+                deck1.splice(deck1.indexOf(item.innerText), 1);
+                specialDeck1.push(item.innerText);
+                item.className = "hidden";
+                console.log(`Grabbed ${item.innerText} Card`);
+          }
+      })
       displaySpecialCards();
     }
 
@@ -387,6 +395,14 @@ function playerbid (){
       document.getElementById("finished1").className = "shown";
       document.getElementById("updates").innerText= " "; 
       buys1 = 1;
+      document.querySelectorAll(".flop1").forEach(item => {
+        if (item.innerText === "Grab" || item.innerText === "Double" || item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
+              deck1.splice(deck1.indexOf(item.innerText), 1);
+              specialDeck1.push(item.innerText);
+              item.className = "hidden";
+              console.log(`Grabbed ${item.innerText} Card`);
+        }
+    })
       displaySpecialCards();
     }
 
@@ -433,7 +449,37 @@ function playCombine (){
 }
 }
 
+//Increase card listeners and functions
+document.getElementsByClassName("specialcards1")[4].addEventListener("click", playIncrease);
+  
+function playIncrease (){
+    if (stage1 === 5 && specialDeck1.indexOf("Increase") > -1) {
+    if (parseInt(deck1[0])){value1 += parseInt(deck1[0])}
+    if (parseInt(deck1[1])){value1 += parseInt(deck1[1])} 
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
+    specialDeck1.splice(specialDeck1.indexOf("Increase"), 1)
+    discard1.push("Increase");
+    displaySpecialCards();  
+    console.log("playIncrease ran")
+  }
+}
 
+ //Buy card listeners and functions
+ document.getElementsByClassName("specialcards1")[3].addEventListener("click", playBuy);
+
+
+ function playBuy (){
+   if (stage1 === 5 && specialDeck1.indexOf("Buy") > -1) {
+   buys1 +=1;
+   document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
+   specialDeck1.splice(specialDeck1.indexOf("Buy"), 1)
+   discard1.push("Buy");
+   displaySpecialCards();  
+   console.log("playBuy ran")
+ }
+ }
+ 
+ 
 
     //Functions to recognize when buy round is over
     document.getElementById("finished1").addEventListener("click", sendFinish)
