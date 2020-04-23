@@ -16,7 +16,7 @@ var newgame = document.getElementById("newgame")
 let stage1 = 1;
 let stage2 = 1;
 let arr1 = [];
-let deck1 = ["Grab", "Increase", "Combine", "Buy", "Double"]; 
+let deck1 = []; 
 let deck2 = [];
 let hand1 = []; 
 let hand2 = [];
@@ -32,7 +32,7 @@ let remove2 = [];
 let finish1 = 0;
 let grab1 = 0;
 let newRoundCounter = 0;
-let specialDeck1 = ["Increase", "Grab", "Double","Combine", "Buy"];
+let specialDeck1 = ["Increase"];
 
 
 newgame.addEventListener("click", function (){

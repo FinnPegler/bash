@@ -2,7 +2,7 @@ var socket = io.connect("http://localhost:8080");
 let stage1 = 1;
 let stage2 = 1;
 let arr2 = [];
-let deck2 = ["Grab", "Increase", "Combine", "Buy", "Double"]; 
+let deck2 = []; 
 let deck1 = [];
 let hand2 = [];
 let hand1 = [];
@@ -18,7 +18,7 @@ let remove2 = [];
 let finish2 = 0;
 let newRoundCounter = 0;
 let grab2 = 0;
-let specialDeck2 = ["Increase", "Grab", "Double","Combine", "Buy"];
+let specialDeck2 = ["Increase"];
 
 socket.on("startResponse", function(data){
     startGame();
