@@ -10,7 +10,7 @@
 
 
 
-var socket = io.connect("ec2-52-14-250-9.us-east-2.compute.amazonaws.com");
+var socket = io.connect("ec2-52-14-250-9.us-east-2.compute.amazonaws.com:3000");
 
 var newgame = document.getElementById("newgame")
 let stage1 = 1;
