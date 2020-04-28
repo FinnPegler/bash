@@ -1,4 +1,4 @@
-var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
+var socket = io.connect("https://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
 let stage1 = 1;
 let stage2 = 1;
 let arr2 = [];
