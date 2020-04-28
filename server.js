@@ -11,7 +11,7 @@
 
 // App setup
 var app = express();
-var server = app.listen(443, function(){
+var server = app.listen(3000, function(){
   console.log("Server.js is running")
 });
 
