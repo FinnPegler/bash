@@ -9,7 +9,8 @@
 //6 = Waiting for decks to be passed
 
 
-var socket = io.connect("https://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
+//var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
+var socket = io.connect("http://localhost:8080");
 
 var newgame = document.getElementById("newgame")
 let stage1 = 1;
@@ -41,6 +42,26 @@ newgame.addEventListener("click", function (){
 
 
 function startGame (){
+    stage1 = 1;
+    stage2 = 1;
+    arr1 = [];
+    deck1 = []; 
+    deck2 = [];
+    hand1 = []; 
+    hand2 = [];
+    discard1 = [];
+    value1 = 0;
+    bid1 = 0;
+    bid2 = 0;
+    multiplier1 = 1;
+    multiplier2 = 1;
+    buys1 = 1;
+    remove1 = [];
+    remove2 = [];
+    finish1 = 0;
+    grab1 = 0;
+    newRoundCounter = 0;
+    specialDeck1 = ["Increase"];
     createFullDecks();
     createPlayerDecks();
     shuffle(arr1);
@@ -49,8 +70,6 @@ function startGame (){
     displayHand();
     displaySpecialCards();
     displayShop();
-    stage1 = 1;
-    stage2 = 1;
     }
 
 function addSendStage1 (){
@@ -72,6 +91,7 @@ socket.on("deck2", function(data){
     deck2[1] = data.deck2[1];
     setTimeout(decksReceived, 200);
 })
+
 
 //bid received through server
 socket.on("bid2", function(data){
@@ -184,6 +204,7 @@ document.querySelectorAll(".cards1").forEach(item => {
           deck1: deck1
         }) 
   }
+  
           if (stage1 === 2 && stage2 === 2) {  
             secondStage()
         }
@@ -216,7 +237,8 @@ document.querySelectorAll(".cards1").forEach(item => {
 //display flop
 function displayFlop(){
 if (stage1 === 2 && stage2 === 2) {
-  console.log("display flop1 ran")
+  newRoundCounter = 0;
+  console.log("display flop1 ran");
   document.getElementById("card9").className = "flop1"
   document.getElementById("card10").className = "flop1"
   document.getElementById("card11").className = "flop2"
@@ -241,7 +263,10 @@ if (stage1 === 2 && stage2 === 2) {
   if (!hand1[0]) {
     document.getElementById("directions1").innerText = "Your hand is empty, you cannot bid";
     stage1 = 4;
-    socket.emit("finish1");
+    socket.emit("finish1", {
+      deck1: deck1,
+      hand1: hand1,
+  });
     socket.emit("handempty1");
     console.log("sending empty hand 1 command")
     socket.emit("stage4.1", {
@@ -345,7 +370,7 @@ function stage1plus1 () {
     item.className = "cards1"})
   stage1 = 4;
   socket.emit("stage4.1", {
-      stage1:stage1,
+      stage1: stage1,
       hand1: hand1
   })
   playerbid();
@@ -364,14 +389,23 @@ function playerbid (){
         }
     }                                                                                                     
 
+
+//function to send finish command on delay when no one bids
+function finishTimeout (){
+  socket.emit("finish1", {
+    deck1: deck1,
+    hand1: hand1,
+});
+}
+
 //calculate winning bid
     if (bid1 === 0 & bid2 === 0){
-      socket.emit("finish1");
-      document.getElementById("updates").innerText= "No one bid, next flop dealt";
-      document.getElementById("finished1").className = "hidden"; 
+      setTimeout(finishTimeout, 500)
+      document.getElementById("updates").innerText= "No one bid, moving to next phase in 1 second";
+      document.getElementById("finished1").className = "hidden";   
     }
 
-    if (bid1*multiplier1 > bid2*multiplier2) {
+    else if (bid1*multiplier1 > bid2*multiplier2) {
       stage1 = 5;
       document.getElementById("directions1").innerText = "Your opponent bid " +bid2 + ". Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
       document.getElementById("finished1").className = "shown";
@@ -379,16 +413,17 @@ function playerbid (){
       buys1 = 1;
       document.querySelectorAll(".flop1").forEach(item => {
           if (item.innerText === "Grab" ||item.innerText === "Double" ||item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
-                deck1.splice(deck1.indexOf(item.innerText), 1);
                 specialDeck1.push(item.innerText);
                 item.className = "hidden";
                 console.log(`Grabbed ${item.innerText} Card`);
+                let index = deck1.indexOf(item.innerText);     
+                deck1[index] = undefined;
           }
       })
       displaySpecialCards();
     }
 
-    if (bid1*multiplier1 === bid2*multiplier2) {
+    else if (bid1*multiplier1 === bid2*multiplier2) {
       stage1 = 5;
       document.getElementById("directions1").innerText = "You bid the same amount. Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
       document.getElementById("finished1").className = "shown";
@@ -396,10 +431,11 @@ function playerbid (){
       buys1 = 1;
       document.querySelectorAll(".flop1").forEach(item => {
         if (item.innerText === "Grab" || item.innerText === "Double" || item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
-              deck1.splice(deck1.indexOf(item.innerText), 1);
               specialDeck1.push(item.innerText);
               item.className = "hidden";
               console.log(`Grabbed ${item.innerText} Card`);
+              let index = deck1.indexOf(item.innerText);     
+              deck1[index] = undefined;
         }
     })
       displaySpecialCards();
@@ -408,7 +444,10 @@ function playerbid (){
     if (bid1*multiplier1 < bid2*multiplier2) {
         document.getElementById("directions1").innerText = "Your opponent bid " + bid2*multiplier2 + " which beat your bid of " + bid1; 
         document.getElementById("updates").innerText= " "; 
-        socket.emit("finish1");
+        socket.emit("finish1", {
+          deck1: deck1,
+          hand1: hand1,
+      });
     }
 
 
@@ -485,13 +524,18 @@ function playIncrease (){
 
     function sendFinish () {
       document.getElementById("finished1").className = "hidden";
-      socket.emit("finish1");
+      socket.emit("finish1", {
+        deck1: deck1,
+        hand1: hand1,
+    });
       socket.emit("lastBuy1");
     }
-  
+
+
     socket.on("finish", function(){
       newFlop();
   })
+
 
 
   //New flop function (resetting all parameters)
@@ -500,17 +544,19 @@ function playIncrease (){
       document.getElementById("finished1").className = "hidden";
       discard1.push(deck1.shift());
       discard1.push(deck1.shift());
-      if (!deck1[0]){socket.emit("newRound1")}
-      if (!hand1[0]){socket.emit("newRound3")}
-      stage1 = 2;stage2 = 2;
-      bid1 = 0;bid2 = 0;
-      multiplier1 = 1;multiplier2 = 1;
-      value1 = 0;value2 = 0;
+      stage1 = 2;
+      stage2 = 2;
+      bid1 = 0;
+      bid2 = 0;
+      multiplier1 = 1;
+      multiplier2 = 1;
+      value1 = 0;
+      value2 = 0;
       finish1 = 0;
+      buys1 = 0;
       socket.emit("deck1", {
         deck1: deck1
       }) 
-      console.log(deck1);
       stage1 = 6;
       setTimeout(decksReceived, 500)
   }
@@ -526,6 +572,8 @@ socket.on("newRound", newRound)
 
 
 function newRound (){
+  if (newRoundCounter === 0) {
+      newRoundcounter = 1;
       document.getElementById("updates").innerText= "Round over, decks shuffled and new round started"
       {document.getElementById("card9").className = "hidden"}
       {document.getElementById("card10").className = "hidden"}
@@ -533,13 +581,16 @@ function newRound (){
       {document.getElementById("card12").className = "hidden"}
       console.log("New round ran");
       discard1.push(...hand1);
+      discard1.push(...deck1);
       var filtered = discard1.filter(function (el) {
-        return el != null;
+        return (el != null ||el != undefined);
       });
+      console.log(deck1)
       discard1 = filtered;
       hand1 = [];
       shuffle(discard1);
       deck1 = discard1;
+      console.log(deck1);
       discard1 = [];
       dealHand(deck1, hand1)
       displayHand();
@@ -547,12 +598,22 @@ function newRound (){
       displaySpecialCards();
       document.getElementById("directions1").innerText = "Click a card to discard";
       document.getElementById("ready1").className = "hidden";
-      stage1 = 1; 
+      stage1 = 1;
       stage2 = 1;
-    }
-
-
-
+      bid1 = 0;
+      bid2 = 0;
+      multiplier1 = 1;
+      multiplier2 = 1;
+      value1 = 0;
+      value2 = 0;
+      finish1 = 0;
+      buys1 = 0;
+      deck2 = [];
+      //console.log(deck1);
+      //console.log(discard1);
+      //console.log(hand1);
+  }
+}
 
 
 

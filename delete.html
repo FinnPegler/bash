@@ -1,8 +1,73 @@
-function takeIncrease () {
-    if (value1 >= 6 && Increases1 > 0){
-      arr1.splice(arr1.indexOf("Increase"), 1)
-      discard1.push("Increase")
-      Increases1 -= 1;
+
+
+
+
+    
+    //This sets off a counter that allows one more buy from player2, once player 1 has run out of cards 
+    socket.on("handempty1", function(){
+      handEmptyCounter1 += 1;
+        console.log("P1 hand empty");
+    })
+
+     //Part 2 of the function above that counts a last buy from Player2 and returns finish which starts new round
+     socket.on("lastBuy2", function(){
+      lastBuy2 += 1;
+      if (handEmptyCounter1 > 0 && lastBuy2 === 1){
+        handEmptyCounter1 = 0;
+        lastBuy2 = 0;
+        console.log("New round due to no hand1 scenario");
+        return newRound ();
+      }
+    })
+
+     //This sets off a counter that allows one more buy from player2, once player 2 has run out of cards 
+     socket.on("handempty2", function(){
+      handEmptyCounter2 += 1;
+        console.log("P2 hand empty");
+    })
+
+    //Part 2 of the function above that counts a last buy from Player1 and returns finish which starts new round
+    socket.on("lastBuy1", function(){
+      lastBuy1 += 1;
+      if (handEmptyCounter2 > 0 && lastBuy1 === 1){
+        handEmptyCounter2 = 0;
+        lastBuy1 = 0;
+        console.log("New round due to no hand2 scenario");
+        return newRound ();
+      }
+    })
+})
+
+
+deck1 = ["1", "2", "3"];
+discard1 = ["4", "5", "6"];
+hand1 = ["7", "8", "9"]
+
+
+
+discard1.push(...hand1);
+      var filtered = discard1.filter(function (el) {
+        return el != null;
+      });
+      discard1 = filtered;
+      hand1 = [];
+      shuffle(discard1);
+      deck1 = discard1;
+      discard1 = [];
+      dealHand(deck1, hand1)
+      displayHand();
       displayShop();
-  }
-  }
+      displaySpecialCards();
+      document.getElementById("directions1").innerText = "Click a card to discard";
+      document.getElementById("ready1").className = "hidden";
+      stage1 = 1;
+      stage2 = 1;
+      bid1 = 0;
+      bid2 = 0;
+      multiplier1 = 1;
+      multiplier2 = 1;
+      value1 = 0;
+      value2 = 0;
+      finish1 = 0;
+      buys1 = 0;
+      deck2 = [];
