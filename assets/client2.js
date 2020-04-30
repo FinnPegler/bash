@@ -21,6 +21,7 @@ let finish2 = 0;
 let newRoundCounter = 0;
 let grab2 = 0;
 let specialDeck2 = ["Increase"];
+let flopsLeft = 0;
 
 socket.on("startResponse", function(data){
     startGame();
@@ -161,14 +162,14 @@ function displayHand () {
       }
 
       function displayShop () {
-        if (countInDeck(arr2, "4") > 0) {document.getElementById("redsh1").innerText = "4";document.getElementById("redsh1b").innerText = "💰: 6";document.getElementById("redsh1t").innerText = "#: " + (countInDeck(arr2, "4"))}
-        if (countInDeck(arr2, "6") > 0) {document.getElementById("redsh2").innerText = "6";document.getElementById("redsh2b").innerText = "💰: 10";document.getElementById("redsh2t").innerText = "#: " + (countInDeck(arr2, "6"))}
-        if (countInDeck(arr2, "8") > 0) {document.getElementById("redsh3").innerText = "8";document.getElementById("redsh3b").innerText = "💰: 20";document.getElementById("redsh3t").innerText = "#: " + (countInDeck(arr2, "8"))}
-        if (countInDeck(arr2, "Grab") > 0) {document.getElementById("redsh4").innerText = "Grab";document.getElementById("redsh4b").innerText = "💰: 8";document.getElementById("redsh4t").innerText = "#: " + (countInDeck(arr2, "Grab"))}
-        if (countInDeck(arr2, "Double") > 0) {document.getElementById("redsh5").innerText = "Double";document.getElementById("redsh5b").innerText = "💰: 8";document.getElementById("redsh5t").innerText = "#: " + (countInDeck(arr2, "Double"))}
-        if (countInDeck(arr2, "Combine") > 0) {document.getElementById("redsh6").innerText = "Combine";document.getElementById("redsh6b").innerText = "💰: 10";document.getElementById("redsh6t").innerText = "#: " + (countInDeck(arr2, "Combine"))}
-        if (countInDeck(arr2, "Buy") > 0) {document.getElementById("redsh7").innerText = "Buy";document.getElementById("redsh7b").innerText = "💰: 12";document.getElementById("redsh7t").innerText = "#: " + (countInDeck(arr2, "Buy"))}
-        if (countInDeck(arr2, "Increase") > 0) {document.getElementById("redsh8").innerText = "Increase";document.getElementById("redsh8b").innerText = "💰: 12";document.getElementById("redsh8t").innerText = "#: " + (countInDeck(arr2, "Increase"))}
+        document.getElementById("redsh1").innerText = "4";document.getElementById("redsh1b").innerText = "💰: 6";document.getElementById("redsh1t").innerText = "#: " + (countInDeck(arr2, "4"))
+        document.getElementById("redsh2").innerText = "6";document.getElementById("redsh2b").innerText = "💰: 10";document.getElementById("redsh2t").innerText = "#: " + (countInDeck(arr2, "6"))
+        document.getElementById("redsh3").innerText = "8";document.getElementById("redsh3b").innerText = "💰: 20";document.getElementById("redsh3t").innerText = "#: " + (countInDeck(arr2, "8"))
+        document.getElementById("redsh4").innerText = "Grab";document.getElementById("redsh4b").innerText = "💰: 8";document.getElementById("redsh4t").innerText = "#: " + (countInDeck(arr2, "Grab"))
+        document.getElementById("redsh5").innerText = "Double";document.getElementById("redsh5b").innerText = "💰: 8";document.getElementById("redsh5t").innerText = "#: " + (countInDeck(arr2, "Double"))
+        document.getElementById("redsh6").innerText = "Combine";document.getElementById("redsh6b").innerText = "💰: 10";document.getElementById("redsh6t").innerText = "#: " + (countInDeck(arr2, "Combine"))
+        document.getElementById("redsh7").innerText = "Buy";document.getElementById("redsh7b").innerText = "💰: 12";document.getElementById("redsh7t").innerText = "#: " + (countInDeck(arr2, "Buy"))
+        document.getElementById("redsh8").innerText = "Increase";document.getElementById("redsh8b").innerText = "💰: 12";document.getElementById("redsh8t").innerText = "#: " + (countInDeck(arr2, "Increase"))
       }
 
 
@@ -220,6 +221,7 @@ function displayHand () {
 function displayFlop (){
 if (stage1 === 2 && stage2 === 2) {
   newRoundCounter = 0;
+  flopsLeft = Math.floor((deck2.length+1)/2);
   console.log("display flop2 ran");
   document.getElementById("card9").className = "flop1";
   document.getElementById("card10").className = "flop1";
@@ -239,10 +241,11 @@ if (stage1 === 2 && stage2 === 2) {
   if (hand2[0]) {
     document.getElementById("directions2").innerText = "Choose Bid Amount";
     document.getElementById("ready2").className = "shown"
-    document.getElementById("updates").innerText= "New flop dealt"
+    document.getElementById("updates").innerText= "New flop dealt: " + flopsLeft + " red flops left"
   }
 
   if (!hand2[0]) {
+    console.log("!hand2[0] part of display flop ran");
     document.getElementById("directions2").innerText = "Your hand is empty, you cannot bid";
     stage2 = 4;
     socket.emit("finish2", {
@@ -258,7 +261,6 @@ if (stage1 === 2 && stage2 === 2) {
   }
 
   stage2 = 3;
-  //setTimeout(function(){stage1 = 3;stage2 = 3}, 1000);
 } 
 }
 
@@ -315,6 +317,10 @@ function playDouble (){
     specialDeck2.splice(specialDeck2.indexOf("Double"), 1)
     discard2.push("Double")
     console.log("double2 ran")
+    socket.emit("bid2", {
+      bid2: bid2,
+      multiplier2: multiplier2
+    });
   }
 }
 
@@ -341,8 +347,9 @@ document.querySelectorAll(".cards2").forEach(item => {
   document.getElementById("ready2").addEventListener("click", stage2plus1);
 
   function stage2plus1 () {
+    console.log("stage2plus1 ran")
     document.querySelectorAll(".cards2dark").forEach(item => {
-      item.className = "cards2"})
+    item.className = "cards2"})
     stage2 = 4;
     if (!hand2[0]){stage2 = 4;}
     socket.emit("stage4.2", {
@@ -555,9 +562,9 @@ function newRound (){
     {document.getElementById("card12").className = "hidden"}
     console.log("New round ran");
     discard2.push(...hand2);
-    discard2.push(...deck1);
+    discard2.push(...deck2);
     var filtered = discard2.filter(function (el) {
-        return el != null;
+      return (el != null ||el != undefined);
       });
     discard2 = filtered;
     hand2 = [];

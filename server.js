@@ -71,10 +71,12 @@ io.on("connection", function (socket){
 
     socket.on("bid1", function (data){
       io.sockets.emit("bid1", data);
+      console.log(data)
     })
 
     socket.on("bid2", function (data){
       io.sockets.emit("bid2", data);
+      console.log(data)
     })
 
     socket.on("stage4.1", function (data){

@@ -33,7 +33,7 @@ let finish1 = 0;
 let grab1 = 0;
 let newRoundCounter = 0;
 let specialDeck1 = ["Increase"];
-
+flopsLeft = 0;
 
 newgame.addEventListener("click", function (){
     startGame();
@@ -177,14 +177,14 @@ function displaySpecialCards () {
 }  
 
 function displayShop () {
-    if (countInDeck(arr1, "4") > 0) {document.getElementById("sh1").innerText = "4";document.getElementById("sh1b").innerText = "💰: 6";document.getElementById("sh1t").innerText = "#: " + (countInDeck(arr1, "4"))}
-    if (countInDeck(arr1, "6") > 0) {document.getElementById("sh2").innerText = "6";document.getElementById("sh2b").innerText = "💰: 10";document.getElementById("sh2t").innerText = "#: " + (countInDeck(arr1, "6"))}
-    if (countInDeck(arr1, "8") > 0) {document.getElementById("sh3").innerText = "8";document.getElementById("sh3b").innerText = "💰: 20";document.getElementById("sh3t").innerText = "#: " + (countInDeck(arr1, "8"))}
-    if (countInDeck(arr1, "Grab") > 0) {document.getElementById("sh4").innerText = "Grab";document.getElementById("sh4b").innerText = "💰: 8";document.getElementById("sh4t").innerText = "#: " + (countInDeck(arr1, "Grab"))}
-    if (countInDeck(arr1, "Double") > 0) {document.getElementById("sh5").innerText = "Double";document.getElementById("sh5b").innerText = "💰: 8";document.getElementById("sh5t").innerText = "#: " + (countInDeck(arr1, "Double"))}
-    if (countInDeck(arr1, "Combine") > 0) {document.getElementById("sh6").innerText = "Combine";document.getElementById("sh6b").innerText = "💰: 10";document.getElementById("sh6t").innerText = "#: " + (countInDeck(arr1, "Combine"))}
-    if (countInDeck(arr1, "Buy") > 0) {document.getElementById("sh7").innerText = "Buy";document.getElementById("sh7b").innerText = "💰: 12";document.getElementById("sh7t").innerText = "#: " + (countInDeck(arr1, "Buy"))}
-    if (countInDeck(arr1, "Increase") > 0) {document.getElementById("sh8").innerText = "Increase";document.getElementById("sh8b").innerText = "💰: 12";document.getElementById("sh8t").innerText = "#: " + (countInDeck(arr1, "Increase"))}
+    document.getElementById("sh1").innerText = "4";document.getElementById("sh1b").innerText = "💰: 6";document.getElementById("sh1t").innerText = "#: " + (countInDeck(arr1, "4"))
+    document.getElementById("sh2").innerText = "6";document.getElementById("sh2b").innerText = "💰: 10";document.getElementById("sh2t").innerText = "#: " + (countInDeck(arr1, "6"))
+    document.getElementById("sh3").innerText = "8";document.getElementById("sh3b").innerText = "💰: 20";document.getElementById("sh3t").innerText = "#: " + (countInDeck(arr1, "8"))
+    document.getElementById("sh4").innerText = "Grab";document.getElementById("sh4b").innerText = "💰: 8";document.getElementById("sh4t").innerText = "#: " + (countInDeck(arr1, "Grab"))
+    document.getElementById("sh5").innerText = "Double";document.getElementById("sh5b").innerText = "💰: 8";document.getElementById("sh5t").innerText = "#: " + (countInDeck(arr1, "Double"))
+    document.getElementById("sh6").innerText = "Combine";document.getElementById("sh6b").innerText = "💰: 10";document.getElementById("sh6t").innerText = "#: " + (countInDeck(arr1, "Combine"))
+    document.getElementById("sh7").innerText = "Buy";document.getElementById("sh7b").innerText = "💰: 12";document.getElementById("sh7t").innerText = "#: " + (countInDeck(arr1, "Buy"))
+    document.getElementById("sh8").innerText = "Increase";document.getElementById("sh8b").innerText = "💰: 12";document.getElementById("sh8t").innerText = "#: " + (countInDeck(arr1, "Increase"))
 }  
 
 
@@ -238,6 +238,7 @@ document.querySelectorAll(".cards1").forEach(item => {
 function displayFlop(){
 if (stage1 === 2 && stage2 === 2) {
   newRoundCounter = 0;
+  flopsLeft = Math.floor((deck1.length+1)/2);
   console.log("display flop1 ran");
   document.getElementById("card9").className = "flop1"
   document.getElementById("card10").className = "flop1"
@@ -257,7 +258,7 @@ if (stage1 === 2 && stage2 === 2) {
   if (hand1[0]) {
     document.getElementById("ready1").className = "shown"
     document.getElementById("directions1").innerText = "Choose Bid Amount";
-    document.getElementById("updates").innerText= "New flop dealt"
+    document.getElementById("updates").innerText= "New flop dealt: " + flopsLeft + " black flops left"
   }
 
   if (!hand1[0]) {
@@ -274,12 +275,6 @@ if (stage1 === 2 && stage2 === 2) {
       hand1: hand1
   })
 }
-
-  if (hand2[0]) {
-    document.getElementById("directions2").innerText = "Choose Bid Amount";
-    document.getElementById("ready2").className = "shown"
-    document.getElementById("updates").innerText= "New flop dealt"
-  }
   stage1 = 3;
   //setTimeout(function(){stage1 = 3;stage2 = 3}, 1000);
 } 
@@ -328,7 +323,6 @@ document.querySelectorAll(".flop1").forEach(item => {
   })
 
 
-
   //Eventlistener for double card
 document.getElementsByClassName("specialcards1")[1].addEventListener("click", playDouble);
 
@@ -337,11 +331,12 @@ function playDouble (){
     multiplier1 = 2;
     specialDeck1.splice(specialDeck1.indexOf("Double"), 1)
     discard1.push("Double")
+    socket.emit("bid1", {
+      bid1: bid1,
+      multiplier1: multiplier1
+    });
   }
 }
-
-
-
 
 
 //Player 1 choose bid
