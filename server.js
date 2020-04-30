@@ -15,8 +15,8 @@
 
 // App setup
 var app = express();
-//var server = app.listen(3000, function(){
-  var server = app.listen(8080, function(){
+var server = app.listen(3000, function(){
+  //var server = app.listen(8080, function(){
   console.log("Server.js is running")
 });
 
