@@ -1,5 +1,5 @@
-var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
-//var socket = io.connect("http://localhost:8080");
+//var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
+var socket = io.connect("http://localhost:8080");
 
 let stage1 = 1;
 let stage2 = 1;
@@ -32,7 +32,7 @@ function startGame (){
     stage1 = 1;
     arr2 = [];
     deck1 = []; 
-    deck2 = [];
+    deck2 = []//"Increase", "Grab", "Double", "Double", "Grab"];
     hand1 = []; 
     hand2 = [];
     discard2 = [];
@@ -47,7 +47,7 @@ function startGame (){
     finish2 = 0;
     grab2 = 0;
     newRoundCounter = 0;
-    specialDeck1 = ["Increase"];
+    specialDeck2 = ["Increase"]//, "Grab", "Double", "Double", "Grab"];
     createFullDecks();
     createPlayerDecks();
     shuffle(arr2);
@@ -268,17 +268,29 @@ if (stage1 === 2 && stage2 === 2) {
 
 //Eventlistener for Grab card 
 document.getElementsByClassName("specialcards2")[0].addEventListener("click", playGrab); 
+let offgrab = 0;
 
-//Play Grab card - remove from Special cards and put in discard2 
+//Play Grab card - remove from Special cards and put in discard1 
 function playGrab () {
-  if (stage2 === 3 && specialDeck2.indexOf("Grab") > -1){
+  if (stage2 === 3 && specialDeck2.indexOf("Grab") > -1 && offgrab === 0){
     grab2 = 1;
     specialDeck2.splice(specialDeck2.indexOf("Grab"), 1)
     discard2.push("Grab")
+    document.getElementsByClassName("specialcards2")[0].style.backgroundColor = "#d3d3d3";
     displaySpecialCards();
-    console.log("first part of playgrab ran")
-      }
-    } 
+  }
+
+  if (stage2 === 3 && offgrab === 1){
+    grab2 = 1;
+    offgrab = -1;
+    discard2.splice(discard2.indexOf("Grab"), 1);
+    specialDeck2.push("Grab");
+    document.getElementsByClassName("specialcards2")[0].style.backgroundColor = "white";
+    displaySpecialCards();
+      }  
+    offgrab += 1;
+} 
+
 
 //Grab card - Function to take special card from flop and place in special cards
 document.querySelectorAll(".flop2").forEach(item => {
@@ -287,6 +299,7 @@ document.querySelectorAll(".flop2").forEach(item => {
           deck2.splice(deck2.indexOf(item.innerText), 1);
           specialDeck2.push(item.innerText);
           item.className = "hidden";
+          document.getElementsByClassName("specialcards2")[0].style.backgroundColor = "white";
           displaySpecialCards();
           console.log(`Grabbed ${item.innerText} Card`);
    }
@@ -302,6 +315,7 @@ document.querySelectorAll(".flop2").forEach(item => {
         specialDeck2.push("Grab");
         specialDeck2.push("Grab");
         item.className = "hidden";
+        document.getElementsByClassName("specialcards2")[0].style.backgroundColor = "white";
         displaySpecialCards();
         console.log("Grabbed Grab Card");
       }
@@ -310,18 +324,32 @@ document.querySelectorAll(".flop2").forEach(item => {
 
 //Eventlistener for double card
 document.getElementsByClassName("specialcards2")[1].addEventListener("click", playDouble);
+let offdouble = 0;
 
 function playDouble (){
-  if (stage2 === 3){
+  if (stage2 === 3 && offdouble === 0){
     multiplier2 = 2;
-    specialDeck2.splice(specialDeck2.indexOf("Double"), 1)
-    discard2.push("Double")
-    console.log("double2 ran")
-    socket.emit("bid2", {
+    specialDeck2.splice(specialDeck2.indexOf("Double"), 1);
+    discard2.push("Double");
+    document.getElementsByClassName("specialcards2")[1].style.backgroundColor = "#d3d3d3";
+    socket.emit("bid1", {
       bid2: bid2,
       multiplier2: multiplier2
     });
   }
+
+  if (stage2 === 3 && offdouble === 1){
+    multiplier2 = 1;
+    offdouble = -1;
+    discard2.splice(discard2.indexOf("Double"), 1)
+    specialDeck2.push("Double");
+    document.getElementsByClassName("specialcards2")[1].style.backgroundColor = "white";
+    socket.emit("bid1", {
+      bid2: bid2,
+      multiplier2: multiplier2
+    });
+  }
+  offdouble += 1;
 }
 
 
@@ -391,10 +419,10 @@ if (bid1 === 0 & bid2 === 0){
 
 else if (bid2*multiplier2 > bid1*multiplier1) {
   stage2 = 5;
+  buys2 = 1;
   document.getElementById("directions2").innerText = "Your opponent bid " +bid1 + ". Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
   document.getElementById("updates").innerText= " "; 
   document.getElementById("finished2").className = "shown";
-  buys2 = 1;
   document.querySelectorAll(".flop2").forEach(item => {
     if (item.innerText === "Grab" ||item.innerText === "Double" ||item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){  
       specialDeck2.push(item.innerText);
@@ -409,10 +437,10 @@ else if (bid2*multiplier2 > bid1*multiplier1) {
 
 else if (bid2*multiplier2 === bid1*multiplier1) {
   stage2 = 5;
+  buys2 = 1;
   document.getElementById("directions2").innerText = "You bid the same amount. Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
   document.getElementById("updates").innerText= " "; 
   document.getElementById("finished2").className = "shown";
-  buys2 = 1;
   document.querySelectorAll(".flop2").forEach(item => {
     if (item.innerText === "Grab" ||item.innerText === "Double" || item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
            specialDeck2.push(item.innerText);
@@ -426,7 +454,7 @@ else if (bid2*multiplier2 === bid1*multiplier1) {
 }
 
 if (bid1*multiplier1 > bid2*multiplier2) {
-document.getElementById("directions2").innerText = "Your opponent bid " + bid1*multiplier1 + " which beat your bid of " + bid2; 
+document.getElementById("directions2").innerText = "Your opponent bid " + bid1*multiplier1 + " which beat your bid of " + bid2*multiplier2; 
 document.getElementById("updates").innerText= " "; 
 socket.emit("finish2", {
   deck2: deck2,
@@ -593,7 +621,7 @@ function newRound (){
 
   //Buy function for player 2
 function take4 () {
-  if (value2 >= 6 && buys2 > 0 && stage2 === 5){
+  if (value2 >= 6 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "4") > 0){
     arr2.splice(arr2.indexOf("4"), 1)
     discard2.push("4")
     buys2 -= 1;
@@ -604,7 +632,7 @@ function take4 () {
 }
 
 function take6 () {
-  if (value2 >= 10 && buys2 > 0 && stage2 === 5){
+  if (value2 >= 10 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "6") > 0){
     arr2.splice(arr2.indexOf("6"), 1)
     discard2.push("6")
     buys2 -= 1;
@@ -616,7 +644,7 @@ function take6 () {
 }
 
 function take8 () {
-  if (value2 >= 20 && buys2 > 0 && stage2 === 5){
+  if (value2 >= 20 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "8") > 0){
     arr2.splice(arr2.indexOf("8"), 1)
     discard2.push("8")
     buys2 -= 1;
@@ -627,7 +655,7 @@ function take8 () {
 }
 
 function takeGrab () {
-  if (value2 >= 8 && buys2 > 0 && stage2 === 5){
+  if (value2 >= 8 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Grab") > 0){
     arr2.splice(arr2.indexOf("Grab"), 1)
     specialDeck2.push("Grab")
     buys2 -= 1;
@@ -639,7 +667,7 @@ function takeGrab () {
 }
 
 function takeDouble () {
-  if (value2 >= 8 && buys2 > 0 && stage2 === 5){
+  if (value2 >= 8 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Double") > 0){
     arr2.splice(arr2.indexOf("Double"), 1)
     specialDeck2.push("Double")
     buys2 -= 1;
@@ -651,7 +679,7 @@ function takeDouble () {
 }
 
 function takeCombine () {
-  if (value2 >= 10 && buys2 > 0 && stage2 === 5){
+  if (value2 >= 10 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Combine") > 0){
     arr2.splice(arr2.indexOf("Combine"), 1)
     specialDeck2.push("Combine")
     buys2 -= 1;
@@ -664,7 +692,7 @@ function takeCombine () {
 }
 
 function takeBuy () {
-  if (value2 >= 12 && buys2 > 0 && stage2 === 5){
+  if (value2 >= 12 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Buy") > 0){
     arr2.splice(arr2.indexOf("Buy"), 1)
     specialDeck2.push("Buy")
     buys2 -= 1;
@@ -676,7 +704,7 @@ function takeBuy () {
 }
 
 function takeIncrease () {
-  if (value2 >= 12 && buys2 > 0 && stage2 === 5){
+  if (value2 >= 12 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Increase") > 0){
     arr2.splice(arr2.indexOf("Increase"), 1)
     specialDeck2.push("Increase")
     buys2 -= 1;

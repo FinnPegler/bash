@@ -9,8 +9,8 @@
 //6 = Waiting for decks to be passed
 
 
-var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
-//var socket = io.connect("http://localhost:8080");
+//var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
+var socket = io.connect("http://localhost:8080");
 
 var newgame = document.getElementById("newgame")
 let stage1 = 1;
@@ -33,7 +33,7 @@ let finish1 = 0;
 let grab1 = 0;
 let newRoundCounter = 0;
 let specialDeck1 = ["Increase"];
-flopsLeft = 0;
+let flopsLeft = 0;
 
 newgame.addEventListener("click", function (){
     startGame();
@@ -45,7 +45,7 @@ function startGame (){
     stage1 = 1;
     stage2 = 1;
     arr1 = [];
-    deck1 = []; 
+    deck1 = []//"Increase", "Grab", "Double", "Double", "Grab"]; 
     deck2 = [];
     hand1 = []; 
     hand2 = [];
@@ -61,7 +61,7 @@ function startGame (){
     finish1 = 0;
     grab1 = 0;
     newRoundCounter = 0;
-    specialDeck1 = ["Increase"];
+    specialDeck1 = ["Increase"]//, "Grab", "Double", "Double", "Grab"];
     createFullDecks();
     createPlayerDecks();
     shuffle(arr1);
@@ -282,17 +282,28 @@ if (stage1 === 2 && stage2 === 2) {
 
 //Eventlistener for Grab card 
 document.getElementsByClassName("specialcards1")[0].addEventListener("click", playGrab); 
+let offgrab = 0;
 
 //Play Grab card - remove from Special cards and put in discard1 
 function playGrab () {
-  if (stage1 === 3 && specialDeck1.indexOf("Grab") > -1){
+  if (stage1 === 3 && specialDeck1.indexOf("Grab") > -1 && offgrab === 0){
     grab1 = 1;
     specialDeck1.splice(specialDeck1.indexOf("Grab"), 1)
     discard1.push("Grab")
+    document.getElementsByClassName("specialcards1")[0].style.backgroundColor = "#d3d3d3";
     displaySpecialCards();
-    console.log("first part of playgrab ran")
-      }
-    } 
+
+  }
+  if (stage1 === 3 && offgrab === 1){
+    grab1 = 1;
+    offgrab = -1;
+    discard1.splice(discard1.indexOf("Grab"), 1);
+    specialDeck1.push("Grab");
+    document.getElementsByClassName("specialcards1")[0].style.backgroundColor = "white";
+    displaySpecialCards();
+      }  
+    offgrab += 1;
+} 
 
 //Grab card - Function to take special card from flop and place in special cards
 document.querySelectorAll(".flop1").forEach(item => {
@@ -301,6 +312,7 @@ document.querySelectorAll(".flop1").forEach(item => {
           deck1.splice(deck1.indexOf(item.innerText), 1);
           specialDeck1.push(item.innerText);
           item.className = "hidden";
+          document.getElementsByClassName("specialcards1")[0].style.backgroundColor = "white";
           displaySpecialCards();
           console.log(`Grabbed ${item.innerText} Card`);
     }
@@ -316,6 +328,7 @@ document.querySelectorAll(".flop1").forEach(item => {
         specialDeck1.push("Grab");
         specialDeck1.push("Grab");
         item.className = "hidden";
+        document.getElementsByClassName("specialcards1")[0].style.backgroundColor = "white";
         displaySpecialCards();
         console.log("Grabbed Grab Card");
       }
@@ -325,18 +338,35 @@ document.querySelectorAll(".flop1").forEach(item => {
 
   //Eventlistener for double card
 document.getElementsByClassName("specialcards1")[1].addEventListener("click", playDouble);
+let offdouble = 0;
 
 function playDouble (){
-  if (stage1 === 3){
+  if (stage1 === 3 && offdouble === 0){
     multiplier1 = 2;
-    specialDeck1.splice(specialDeck1.indexOf("Double"), 1)
-    discard1.push("Double")
+    specialDeck1.splice(specialDeck1.indexOf("Double"), 1);
+    discard1.push("Double");
+    document.getElementsByClassName("specialcards1")[1].style.backgroundColor = "#d3d3d3";
     socket.emit("bid1", {
       bid1: bid1,
       multiplier1: multiplier1
     });
   }
+
+  if (stage1 === 3 && offdouble === 1){
+    multiplier1 = 1;
+    offdouble = -1;
+    discard1.splice(discard1.indexOf("Double"), 1)
+    specialDeck1.push("Double");
+    document.getElementsByClassName("specialcards1")[1].style.backgroundColor = "white";
+    socket.emit("bid1", {
+      bid1: bid1,
+      multiplier1: multiplier1
+    });
+  }
+  offdouble += 1;
 }
+
+
 
 
 //Player 1 choose bid
@@ -402,10 +432,10 @@ function finishTimeout (){
 
     else if (bid1*multiplier1 > bid2*multiplier2) {
       stage1 = 5;
+      buys1 = 1;
       document.getElementById("directions1").innerText = "Your opponent bid " +bid2 + ". Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
       document.getElementById("finished1").className = "shown";
       document.getElementById("updates").innerText= " "; 
-      buys1 = 1;
       document.querySelectorAll(".flop1").forEach(item => {
           if (item.innerText === "Grab" ||item.innerText === "Double" ||item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
                 specialDeck1.push(item.innerText);
@@ -420,10 +450,10 @@ function finishTimeout (){
 
     else if (bid1*multiplier1 === bid2*multiplier2) {
       stage1 = 5;
+      buys1 = 1;
       document.getElementById("directions1").innerText = "You bid the same amount. Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
       document.getElementById("finished1").className = "shown";
       document.getElementById("updates").innerText= " "; 
-      buys1 = 1;
       document.querySelectorAll(".flop1").forEach(item => {
         if (item.innerText === "Grab" || item.innerText === "Double" || item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
               specialDeck1.push(item.innerText);
@@ -437,7 +467,7 @@ function finishTimeout (){
     }
 
     if (bid1*multiplier1 < bid2*multiplier2) {
-        document.getElementById("directions1").innerText = "Your opponent bid " + bid2*multiplier2 + " which beat your bid of " + bid1; 
+        document.getElementById("directions1").innerText = "Your opponent bid " + bid2*multiplier2 + " which beat your bid of " + bid1*multiplier1; 
         document.getElementById("updates").innerText= " "; 
         socket.emit("finish1", {
           deck1: deck1,
@@ -614,7 +644,7 @@ function newRound (){
 
     //Buy functions for player 1
 function take4 () {
-  if (value1 >= 6 && buys1 > 0 && stage1 === 5){
+  if (value1 >= 6 && buys1 > 0 && stage1 === 5 && countInDeck(arr1, "4") > 0){
     arr1.splice(arr1.indexOf("4"), 1)
     discard1.push("4")
     buys1 -= 1;
@@ -625,7 +655,7 @@ function take4 () {
 }
 
 function take6 () {
-  if (value1 >= 10 && buys1 > 0 && stage1 === 5){
+  if (value1 >= 10 && buys1 > 0 && stage1 === 5 && countInDeck(arr1, "6")> 0){
     arr1.splice(arr1.indexOf("6"), 1)
     discard1.push("6")
     buys1 -= 1;
@@ -637,7 +667,7 @@ function take6 () {
 }
 
 function take8 () {
-  if (value1 >= 20 && buys1 > 0 && stage1 === 5){
+  if (value1 >= 20 && buys1 > 0 && stage1 === 5 && countInDeck(arr1, "8") > 0){
     arr1.splice(arr1.indexOf("8"), 1)
     discard1.push("8")
     buys1 -= 1;
@@ -648,7 +678,7 @@ function take8 () {
 }
 
 function takeGrab () {
-  if (value1 >= 8 && buys1 > 0 && stage1 === 5){
+  if (value1 >= 8 && buys1 > 0 && stage1 === 5 && countInDeck(arr1, "Grab") > 0){
     arr1.splice(arr1.indexOf("Grab"), 1)
     specialDeck1.push("Grab")
     buys1 -= 1;
@@ -660,7 +690,7 @@ function takeGrab () {
 }
 
 function takeDouble () {
-  if (value1 >= 8 && buys1 > 0 && stage1 === 5){
+  if (value1 >= 8 && buys1 > 0 && stage1 === 5 && countInDeck(arr1, "Double") > 0){
     arr1.splice(arr1.indexOf("Double"), 1)
     specialDeck1.push("Double")
     buys1 -= 1;
@@ -672,7 +702,7 @@ function takeDouble () {
 }
 
 function takeCombine () {
-  if (value1 >= 10 && buys1 > 0 && stage1 === 5){
+  if (value1 >= 10 && buys1 > 0 && stage1 === 5 && countInDeck(arr1, "Combine") > 0){
     arr1.splice(arr1.indexOf("Combine"), 1)
     specialDeck1.push("Combine")
     buys1 -= 1;
@@ -684,7 +714,7 @@ function takeCombine () {
 }
 
 function takeBuy () {
-  if (value1 >= 12 && buys1 > 0 && stage1 === 5){
+  if (value1 >= 12 && buys1 > 0 && stage1 === 5 && countInDeck(arr1, "Buy") > 0){
     arr1.splice(arr1.indexOf("Buy"), 1)
     specialDeck1.push("Buy")
     buys1 -= 1;
@@ -696,7 +726,7 @@ function takeBuy () {
 }
 
 function takeIncrease () {
-  if (value1 >= 12 && buys1 > 0 && stage1 === 5){
+  if (value1 >= 12 && buys1 > 0 && stage1 === 5 && countInDeck(arr1, "Increase") > 0){
     arr1.splice(arr1.indexOf("Increase"), 1)
     specialDeck1.push("Increase")
     buys1 -= 1;

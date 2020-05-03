@@ -113,6 +113,7 @@ justify-content: space-between;
     font-weight: bold;
 }
 
+
 .shopcards1 {
     display: flex;
     flex-direction: column;
@@ -142,6 +143,8 @@ justify-content: space-between;
     font-size: 16px;
     font-weight: bold;
 }
+
+
 
 .shopcards2 {
     display: flex;

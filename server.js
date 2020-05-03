@@ -15,8 +15,8 @@
 
 // App setup
 var app = express();
-var server = app.listen(3000, function(){
-  //var server = app.listen(8080, function(){
+//var server = app.listen(3000, function(){
+var server = app.listen(8080, function(){
   console.log("Server.js is running")
 });
 
@@ -134,7 +134,7 @@ io.on("connection", function (socket){
      //Part 2 of the function above that counts a last buy from Player2 and returns finish which starts new round
      socket.on("lastBuy2", function(){
       lastBuy2 += 1;
-      if (handEmptyCounter1 > 0 && lastBuy2 === 1){
+      if (handEmptyCounter1 > 0 && lastBuy2> 0){
         handEmptyCounter1 = 0;
         lastBuy2 = 0;
         console.log("New round due to no hand1 scenario");
@@ -151,7 +151,7 @@ io.on("connection", function (socket){
     //Part 2 of the function above that counts a last buy from Player1 and returns finish which starts new round
     socket.on("lastBuy1", function(){
       lastBuy1 += 1;
-      if (handEmptyCounter2 > 0 && lastBuy1 === 1){
+      if (handEmptyCounter2 > 0 && lastBuy1 > 0){
         handEmptyCounter2 = 0;
         lastBuy1 = 0;
         console.log("New round due to no hand2 scenario");
