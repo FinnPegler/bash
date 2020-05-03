@@ -20,7 +20,7 @@ let remove2 = [];
 let finish2 = 0;
 let newRoundCounter = 0;
 let grab2 = 0;
-let specialDeck2 = ["Increase"];
+let specialDeck2 = [];
 let flopsLeft = 0;
 
 socket.on("startResponse", function(data){
@@ -47,7 +47,7 @@ function startGame (){
     finish2 = 0;
     grab2 = 0;
     newRoundCounter = 0;
-    specialDeck2 = ["Increase"]//, "Grab", "Double", "Double", "Grab"];
+    specialDeck2 = ["Combine"]//, "Grab", "Double", "Double", "Grab"];
     createFullDecks();
     createPlayerDecks();
     shuffle(arr2);

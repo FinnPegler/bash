@@ -32,10 +32,11 @@ let remove2 = [];
 let finish1 = 0;
 let grab1 = 0;
 let newRoundCounter = 0;
-let specialDeck1 = ["Increase"];
+let specialDeck1 = [];
 let flopsLeft = 0;
 
 newgame.addEventListener("click", function (){
+  document.getElementById("newgame").className = "hidden"
     startGame();
     socket.emit("start", {})
 })
@@ -61,7 +62,7 @@ function startGame (){
     finish1 = 0;
     grab1 = 0;
     newRoundCounter = 0;
-    specialDeck1 = ["Increase"]//, "Grab", "Double", "Double", "Grab"];
+    specialDeck1 = ["Combine"]//, "Grab", "Double", "Double", "Grab"];
     createFullDecks();
     createPlayerDecks();
     shuffle(arr1);
