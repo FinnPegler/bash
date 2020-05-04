@@ -20,6 +20,7 @@ let deck1 = [];
 let deck2 = [];
 let hand1 = []; 
 let hand2 = [];
+let handlength1 = 0;
 let discard1 = [];
 let value1 = 0;
 let bid1 = 0;
@@ -623,15 +624,17 @@ offbuy += 1;
     }
 
 
-    socket.on("finish", function(){
+    socket.on("finish", function(data){
+      hand2 = data.hand2;
       newFlop();
   })
 
 
-
   //New flop function (resetting all parameters)
   function newFlop () {
-      console.log("newflop1 ran")
+      if (hand2.length <= 2){document.getElementById("card7").className = "hidden";}
+      if (hand2.length <= 1){document.getElementById("card6").className = "hidden";}
+      if (hand2.length <= 0){document.getElementById("card5").className = "hidden";}
       document.getElementById("finished1").className = "hidden";
       discard1.push(deck1.shift());
       discard1.push(deck1.shift());
@@ -665,7 +668,10 @@ socket.on("newRound", newRound)
 function newRound (){
   if (newRoundCounter === 0) {
       newRoundcounter = 1;
-      document.getElementById("updates").innerText= "Round over, decks shuffled and new round started"
+      document.getElementById("updates").innerText= "Round over, decks shuffled and new round started";
+      document.getElementById("card5").className = "cards2";
+      document.getElementById("card6").className = "cards2";
+      document.getElementById("card7").className = "cards2";
       {document.getElementById("card9").className = "hidden"}
       {document.getElementById("card10").className = "hidden"}
       {document.getElementById("card11").className = "hidden"}

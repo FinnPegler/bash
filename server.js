@@ -99,7 +99,10 @@ io.on("connection", function (socket){
       if (finishCounter === 2){
         if (!deck1[2] && !deck2[2]){return newRound()};
         if (!hand1[0] && !hand2[0]){return newRound()};
-        io.sockets.emit("finish");
+        io.sockets.emit("finish", {
+          hand2: hand2,
+          hand1: hand1,
+      });
         finishCounter = 0;
         console.log("finish1 emit sent")
       }
@@ -118,7 +121,10 @@ io.on("connection", function (socket){
       if (finishCounter === 2){
         if (!deck1[2] && !deck2[2]){return newRound()};
         if (!hand1[0] && !hand2[0]){return newRound()};
-        io.sockets.emit("finish");
+        io.sockets.emit("finish", {
+          hand2: hand2,
+          hand1: hand1,
+      });
         console.log("finish2 emit sent ");
         finishCounter = 0;
       }

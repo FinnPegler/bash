@@ -8,6 +8,7 @@ let deck2 = [];
 let deck1 = [];
 let hand2 = [];
 let hand1 = [];
+let handlength2 = 0;
 let discard2 = [];
 let value1 = 0;
 let value2 = 0;
@@ -603,13 +604,17 @@ function playIncrease (){
 
   }
 
-  socket.on("finish", function(){
+  socket.on("finish", function(data){
+    hand1 = data.hand1;
     newFlop();
 })
 
   
   //New flop function (resetting all parameters)
   function newFlop () {
+    if (hand1.length <= 2){document.getElementById("card3").className = "hidden";}
+    if (hand1.length <= 1){document.getElementById("card2").className = "hidden";}
+    if (hand1.length <= 0){document.getElementById("card1").className = "hidden";}
       console.log("newflop2 ran");
       document.getElementById("finished2").className = "hidden";
       discard2.push(deck2.shift());
@@ -646,11 +651,14 @@ socket.on("newRound", newRound)
 function newRound (){
   if (newRoundCounter === 0) {
     newRoundcounter = 1;
-    document.getElementById("updates").innerText= "Round over, decks shuffled and new round started"
-    {document.getElementById("card9").className = "hidden"}
-    {document.getElementById("card10").className = "hidden"}
-    {document.getElementById("card11").className = "hidden"}
-    {document.getElementById("card12").className = "hidden"}
+    document.getElementById("updates").innerText= "Round over, decks shuffled and new round started";
+    document.getElementById("card3").className = "cards1";
+    document.getElementById("card2").className = "cards1";
+    document.getElementById("card1").className = "cards1";
+    document.getElementById("card9").className = "hidden";
+    document.getElementById("card10").className = "hidden";
+    document.getElementById("card11").className = "hidden";
+    document.getElementById("card12").className = "hidden";
     console.log("New round ran");
     discard2.push(...hand2);
     discard2.push(...deck2);
