@@ -259,7 +259,7 @@ if (stage1 === 2 && stage2 === 2) {
   if (hand1[0]) {
     document.getElementById("ready1").className = "shown"
     document.getElementById("directions1").innerText = "Choose Bid Amount";
-    document.getElementById("updates").innerText= "New flop dealt (" + flopsLeft + " black flop(s) left)"
+    document.getElementById("updates").innerText= "New flop dealt, " + flopsLeft + " left"
   }
 
   if (!hand1[0]) {

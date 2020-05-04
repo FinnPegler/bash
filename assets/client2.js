@@ -241,7 +241,7 @@ if (stage1 === 2 && stage2 === 2) {
   if (hand2[0]) {
     document.getElementById("directions2").innerText = "Choose Bid Amount";
     document.getElementById("ready2").className = "shown"
-    document.getElementById("updates").innerText= "New flop dealt (" + flopsLeft + " red flop(s) left)"
+    document.getElementById("updates").innerText = "New flop dealt, " + flopsLeft + " left"
   }
 
   if (!hand2[0]) {
@@ -516,7 +516,7 @@ function playCombine (){
  displaySpecialCards();  
 }
 
-if (stage2 === 5 && offcombine === 1) {
+if (stage2 === 5 && offcombine === 1 && value2 > 9) {
   if (parseInt(deck1[0])){value2 -= parseInt(deck1[0])}
   if (parseInt(deck1[1])){value2 -= parseInt(deck1[1])} 
   document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)";  
@@ -533,11 +533,11 @@ offcombine += 1;
 //Increase card listeners and functions
 document.getElementsByClassName("specialcards2")[4].addEventListener("click", playIncrease);
 let offincrease = 0;
-
+let undoincrease = 0;
 function playIncrease (){
     if (stage2 === 5 && specialDeck2.indexOf("Increase") > -1 && offincrease === 0) {
-    if (parseInt(deck2[0])){value2 += parseInt(deck2[0])}
-    if (parseInt(deck2[1])){value2 += parseInt(deck2[1])} 
+    if (parseInt(deck2[0])){value2 += parseInt(deck2[0]);undoincrease += parseInt(deck2[0])}
+    if (parseInt(deck2[1])){value2 += parseInt(deck2[1]);undoincrease += parseInt(deck2[0])}
     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)";  
     specialDeck2.splice(specialDeck2.indexOf("Increase"), 1)
     discard2.push("Increase");
@@ -545,7 +545,7 @@ function playIncrease (){
     displaySpecialCards();  
   }
 
-  if (stage2 === 5 && offincrease === 1) {
+  if (stage2 === 5 && offincrease === 1 && undoincrease < value2) {
     if (parseInt(deck2[0])){value2 -= parseInt(deck2[0])}
     if (parseInt(deck2[1])){value2 -= parseInt(deck2[1])} 
     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)";  
@@ -573,7 +573,7 @@ function playIncrease (){
      displaySpecialCards();  
    }
   
-   if (stage2 === 5 && offbuy === 1) {
+   if (stage2 === 5 && offbuy === 1) { 
     buys2 -= 1;
     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     discard2.splice(discard2.indexOf("Buy"), 1)
