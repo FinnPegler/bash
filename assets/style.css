@@ -39,27 +39,30 @@ justify-content: space-between;
 }
 
 #directions1 {
-    font-size: 30px;
+    font-size: 26px;
     font-weight: bold;
     text-align: center;
-    min-height: 34.4px;
+    height: 70px;
+    width: 380px;
     margin: 15px 0px;
 }
 
 #directions2 {
-    font-size: 30px;
+    font-size: 26px;
     font-weight: bold;
     text-align: center;
-    min-height: 34.4px;
+    height: 70px;
+    width: 380px;
     color: red;
     margin: 15px 0px;
 }
 
-#ready1, #ready2, #finished1, #finished2 {
+#ready1, #ready2, #finished1, #finished2, #readycontainer {
     width: 150px;
     margin: auto;
     display:block;
     height: 40px;
+    margin-bottom: 10px;
 }
 
 #hand1 {
@@ -71,6 +74,7 @@ justify-content: space-between;
 }
 
 .cards1 {
+    background-color: white;
     display: flex;
     align-items: center;
     justify-content: center;

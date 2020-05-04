@@ -9,8 +9,8 @@
 //6 = Waiting for decks to be passed
 
 
-var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
-//var socket = io.connect("http://localhost:8080");
+//var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
+var socket = io.connect("http://localhost:8080");
 
 var newgame = document.getElementById("newgame")
 let stage1 = 1;
@@ -62,7 +62,7 @@ function startGame (){
     finish1 = 0;
     grab1 = 0;
     newRoundCounter = 0;
-    specialDeck1 = ["Combine"]//, "Grab", "Double", "Double", "Grab"];
+    specialDeck1 = ["Combine" , "Increase", "Double", "Buy", "Grab"];
     createFullDecks();
     createPlayerDecks();
     shuffle(arr1);
@@ -239,7 +239,7 @@ document.querySelectorAll(".cards1").forEach(item => {
 function displayFlop(){
 if (stage1 === 2 && stage2 === 2) {
   newRoundCounter = 0;
-  flopsLeft = Math.floor((deck1.length+1)/2);
+  flopsLeft = Math.floor(((deck1.length+1)/2) -1);
   console.log("display flop1 ran");
   document.getElementById("card9").className = "flop1"
   document.getElementById("card10").className = "flop1"
@@ -259,7 +259,7 @@ if (stage1 === 2 && stage2 === 2) {
   if (hand1[0]) {
     document.getElementById("ready1").className = "shown"
     document.getElementById("directions1").innerText = "Choose Bid Amount";
-    document.getElementById("updates").innerText= "New flop dealt: " + flopsLeft + " black flops left"
+    document.getElementById("updates").innerText= "New flop dealt (" + flopsLeft + " black flop(s) left)"
   }
 
   if (!hand1[0]) {
@@ -342,11 +342,12 @@ document.getElementsByClassName("specialcards1")[1].addEventListener("click", pl
 let offdouble = 0;
 
 function playDouble (){
-  if (stage1 === 3 && offdouble === 0){
+  if (stage1 === 3 && offdouble === 0 && specialDeck1.indexOf("Double") > -1){
     multiplier1 = 2;
     specialDeck1.splice(specialDeck1.indexOf("Double"), 1);
     discard1.push("Double");
     document.getElementsByClassName("specialcards1")[1].style.backgroundColor = "#d3d3d3";
+    displaySpecialCards();
     socket.emit("bid1", {
       bid1: bid1,
       multiplier1: multiplier1
@@ -359,6 +360,7 @@ function playDouble (){
     discard1.splice(discard1.indexOf("Double"), 1)
     specialDeck1.push("Double");
     document.getElementsByClassName("specialcards1")[1].style.backgroundColor = "white";
+    displaySpecialCards();
     socket.emit("bid1", {
       bid1: bid1,
       multiplier1: multiplier1
@@ -368,22 +370,44 @@ function playDouble (){
 }
 
 
-
-
 //Player 1 choose bid
 document.querySelectorAll(".cards1").forEach(item => {
     item.addEventListener("click", event => {
       if (stage1 === 3 && item.className === ("cards1")) {
+          console.log("cards1 ran")
           bid1 += parseInt(item.innerText);
           remove1.push(item.innerText);
           socket.emit("bid1", {
             bid1: bid1,
             multiplier1: multiplier1
           });
-          item.className = "cards1dark";
+          setTimeout(delayClassChange, 20, item)
         }
     })
   })
+
+
+function delayClassChange (item) {
+  console.log("delayClassChange ran")
+  item.className = "cards1dark";
+}
+
+
+document.addEventListener("click", unclick );
+
+function unclick (event) {
+  let item = event.target;
+  if (stage1 === 3 && item.className === ("cards1dark")) {
+    console.log("cards1dark ran")
+    bid1 -= parseInt(item.innerText);
+    remove1.splice(remove1.indexOf(item.innerText), 1);
+    socket.emit("bid1", {
+      bid1: bid1,
+      multiplier1: multiplier1
+    });
+    item.className = "cards1";
+  }
+}
 
 
 
@@ -392,6 +416,8 @@ document.getElementById("ready1").addEventListener("click", stage1plus1);
 
 //function to move stage1 to 4 and send stage and hand data, then run player bid
 function stage1plus1 () {
+  document.getElementsByClassName("specialcards1")[0].style.backgroundColor = "white";
+  document.getElementsByClassName("specialcards1")[1].style.backgroundColor = "white";
   document.querySelectorAll(".cards1dark").forEach(item => {
     item.className = "cards1"})
   stage1 = 4;
@@ -434,7 +460,7 @@ function finishTimeout (){
     else if (bid1*multiplier1 > bid2*multiplier2) {
       stage1 = 5;
       buys1 = 1;
-      document.getElementById("directions1").innerText = "Your opponent bid " +bid2 + ". Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
+      document.getElementById("directions1").innerText = "Opponent bid " + bid2*multiplier2 + ". Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
       document.getElementById("finished1").className = "shown";
       document.getElementById("updates").innerText= " "; 
       document.querySelectorAll(".flop1").forEach(item => {
@@ -452,7 +478,7 @@ function finishTimeout (){
     else if (bid1*multiplier1 === bid2*multiplier2) {
       stage1 = 5;
       buys1 = 1;
-      document.getElementById("directions1").innerText = "You bid the same amount. Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
+      document.getElementById("directions1").innerText = "Equal bids, spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
       document.getElementById("finished1").className = "shown";
       document.getElementById("updates").innerText= " "; 
       document.querySelectorAll(".flop1").forEach(item => {
@@ -468,7 +494,7 @@ function finishTimeout (){
     }
 
     if (bid1*multiplier1 < bid2*multiplier2) {
-        document.getElementById("directions1").innerText = "Your opponent bid " + bid2*multiplier2 + " which beat your bid of " + bid1*multiplier1; 
+        document.getElementById("directions1").innerText = "Opponent bid " + bid2*multiplier2 + " which beat your bid of " + bid1*multiplier1; 
         document.getElementById("updates").innerText= " "; 
         socket.emit("finish1", {
           deck1: deck1,
@@ -499,49 +525,85 @@ document.getElementsByClassName("shopcards1")[7].addEventListener("click", takeI
 
 //Combine card listeners and functions
 document.getElementsByClassName("specialcards1")[2].addEventListener("click", playCombine);
-
+let offcombine = 0;
 
 function playCombine (){
- if (stage1 === 5 && specialDeck1.indexOf("Combine") > -1) {
+ if (stage1 === 5 && specialDeck1.indexOf("Combine") > -1 && offcombine === 0) {
  if (parseInt(deck2[0])){value1 += parseInt(deck2[0])}
  if (parseInt(deck2[1])){value1 += parseInt(deck2[1])} 
  document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1+" buy(s)";  
  specialDeck1.splice(specialDeck1.indexOf("Combine"), 1)
  discard1.push("Combine");
+ document.getElementsByClassName("specialcards1")[2].style.backgroundColor = "#d3d3d3";
  displaySpecialCards();  
- console.log("playCombine1 ran")
 }
+
+if (stage1 === 5 && offcombine === 1) {
+  if (parseInt(deck2[0])){value1 -= parseInt(deck2[0])}
+  if (parseInt(deck2[1])){value1 -= parseInt(deck2[1])} 
+  document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
+  discard1.splice(discard1.indexOf("Combine"), 1)
+  specialDeck1.push("Combine");
+  document.getElementsByClassName("specialcards1")[2].style.backgroundColor = "white";
+  displaySpecialCards();  
+  offcombine = -1;
+ }
+offcombine += 1;
 }
 
 //Increase card listeners and functions
 document.getElementsByClassName("specialcards1")[4].addEventListener("click", playIncrease);
-  
+let offincrease = 0;
+
 function playIncrease (){
-    if (stage1 === 5 && specialDeck1.indexOf("Increase") > -1) {
+    if (stage1 === 5 && specialDeck1.indexOf("Increase") > -1 && offincrease === 0) {
     if (parseInt(deck1[0])){value1 += parseInt(deck1[0])}
     if (parseInt(deck1[1])){value1 += parseInt(deck1[1])} 
     document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     specialDeck1.splice(specialDeck1.indexOf("Increase"), 1)
     discard1.push("Increase");
+    document.getElementsByClassName("specialcards1")[4].style.backgroundColor = "#d3d3d3";
     displaySpecialCards();  
-    console.log("playIncrease ran")
   }
+
+  if (stage1 === 5 && offincrease === 1) {
+    if (parseInt(deck1[0])){value1 -= parseInt(deck1[0])}
+    if (parseInt(deck1[1])){value1 -= parseInt(deck1[1])} 
+    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
+    discard1.splice(discard1.indexOf("Increase"), 1)
+    specialDeck1.push("Increase");
+    document.getElementsByClassName("specialcards1")[4].style.backgroundColor = "white";
+    displaySpecialCards();  
+    offincrease = -1;
+  }
+  offincrease += 1;
 }
 
  //Buy card listeners and functions
  document.getElementsByClassName("specialcards1")[3].addEventListener("click", playBuy);
-
+let offbuy = 0;
 
  function playBuy (){
-   if (stage1 === 5 && specialDeck1.indexOf("Buy") > -1) {
-   buys1 +=1;
+ if (stage1 === 5 && specialDeck1.indexOf("Buy") > -1 && offbuy === 0) {
+   buys1 += 1;
    document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
    specialDeck1.splice(specialDeck1.indexOf("Buy"), 1)
    discard1.push("Buy");
+   document.getElementsByClassName("specialcards1")[3].style.backgroundColor = "#d3d3d3";
    displaySpecialCards();  
-   console.log("playBuy ran")
  }
- }
+
+ if (stage1 === 5 && offbuy === 1) {
+  buys1 -= 1;
+  document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
+  discard1.splice(discard1.indexOf("Buy"), 1)
+  specialDeck1.push("Buy");
+  document.getElementsByClassName("specialcards1")[3].style.backgroundColor = "white";
+  displaySpecialCards();  
+  offbuy = -1;
+}
+offbuy += 1;
+}
  
  
 
@@ -550,6 +612,9 @@ function playIncrease (){
 
     function sendFinish () {
       document.getElementById("finished1").className = "hidden";
+      document.getElementsByClassName("specialcards1")[2].style.backgroundColor = "white";
+      document.getElementsByClassName("specialcards1")[3].style.backgroundColor = "white";
+      document.getElementsByClassName("specialcards1")[4].style.backgroundColor = "white";
       socket.emit("finish1", {
         deck1: deck1,
         hand1: hand1,

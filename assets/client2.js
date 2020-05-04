@@ -1,5 +1,5 @@
-var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
-//var socket = io.connect("http://localhost:8080");
+//var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
+var socket = io.connect("http://localhost:8080");
 
 let stage1 = 1;
 let stage2 = 1;
@@ -47,7 +47,7 @@ function startGame (){
     finish2 = 0;
     grab2 = 0;
     newRoundCounter = 0;
-    specialDeck2 = ["Combine"]//, "Grab", "Double", "Double", "Grab"];
+    specialDeck2 = ["Combine" , "Increase", "Double", "Buy", "Grab"];
     createFullDecks();
     createPlayerDecks();
     shuffle(arr2);
@@ -221,7 +221,7 @@ function displayHand () {
 function displayFlop (){
 if (stage1 === 2 && stage2 === 2) {
   newRoundCounter = 0;
-  flopsLeft = Math.floor((deck2.length+1)/2);
+  flopsLeft = Math.floor(((deck2.length+1)/2) -1);
   console.log("display flop2 ran");
   document.getElementById("card9").className = "flop1";
   document.getElementById("card10").className = "flop1";
@@ -241,7 +241,7 @@ if (stage1 === 2 && stage2 === 2) {
   if (hand2[0]) {
     document.getElementById("directions2").innerText = "Choose Bid Amount";
     document.getElementById("ready2").className = "shown"
-    document.getElementById("updates").innerText= "New flop dealt: " + flopsLeft + " red flops left"
+    document.getElementById("updates").innerText= "New flop dealt (" + flopsLeft + " red flop(s) left)"
   }
 
   if (!hand2[0]) {
@@ -327,12 +327,13 @@ document.getElementsByClassName("specialcards2")[1].addEventListener("click", pl
 let offdouble = 0;
 
 function playDouble (){
-  if (stage2 === 3 && offdouble === 0){
+  if (stage2 === 3 && offdouble === 0 && specialDeck2.indexOf("Double") > -1){
     multiplier2 = 2;
     specialDeck2.splice(specialDeck2.indexOf("Double"), 1);
     discard2.push("Double");
     document.getElementsByClassName("specialcards2")[1].style.backgroundColor = "#d3d3d3";
-    socket.emit("bid1", {
+    displaySpecialCards();
+    socket.emit("bid2", {
       bid2: bid2,
       multiplier2: multiplier2
     });
@@ -344,7 +345,8 @@ function playDouble (){
     discard2.splice(discard2.indexOf("Double"), 1)
     specialDeck2.push("Double");
     document.getElementsByClassName("specialcards2")[1].style.backgroundColor = "white";
-    socket.emit("bid1", {
+    displaySpecialCards();
+    socket.emit("bid2", {
       bid2: bid2,
       multiplier2: multiplier2
     });
@@ -353,21 +355,39 @@ function playDouble (){
 }
 
 
-
 //Player 2 choose bid
 document.querySelectorAll(".cards2").forEach(item => {
-    item.addEventListener("click", event => {
-      if (stage2 === 3 && item.className === ("cards2")) {
-          bid2 += parseInt(item.innerText);
-          remove2.push(item.innerText);
-          socket.emit("bid2", {
-            bid2: bid2,
-            multiplier2: multiplier2
-          });
-          item.className = "cards2dark";
-        }
-    })
+  item.addEventListener("click", event => {
+    if (stage2 === 3 && item.className === ("cards2")) {
+        bid2 += parseInt(item.innerText);
+        remove2.push(item.innerText);
+        socket.emit("bid2", {
+          bid2: bid2,
+          multiplier2: multiplier2
+        });
+        setTimeout(delayClassChange, 20, item)
+      }
   })
+})
+
+function delayClassChange (item) {
+item.className = "cards2dark";
+}
+
+document.addEventListener("click", unclick );
+
+function unclick (event) {
+let item = event.target;
+if (stage2 === 3 && item.className === ("cards2dark")) {
+  bid2 -= parseInt(item.innerText);
+  remove2.splice(remove2.indexOf(item.innerText), 1);
+  socket.emit("bid2", {
+    bid2: bid2,
+    multiplier2: multiplier2
+  });
+  item.className = "cards2";
+}
+}
 
 
 
@@ -375,11 +395,12 @@ document.querySelectorAll(".cards2").forEach(item => {
   document.getElementById("ready2").addEventListener("click", stage2plus1);
 
   function stage2plus1 () {
-    console.log("stage2plus1 ran")
+    document.getElementsByClassName("specialcards2")[0].style.backgroundColor = "white";
+    document.getElementsByClassName("specialcards2")[1].style.backgroundColor = "white";
     document.querySelectorAll(".cards2dark").forEach(item => {
     item.className = "cards2"})
     stage2 = 4;
-    if (!hand2[0]){stage2 = 4;}
+    //if (!hand2[0]){stage2 = 4;}
     socket.emit("stage4.2", {
         stage2: stage2,
         hand2: hand2
@@ -420,7 +441,7 @@ if (bid1 === 0 & bid2 === 0){
 else if (bid2*multiplier2 > bid1*multiplier1) {
   stage2 = 5;
   buys2 = 1;
-  document.getElementById("directions2").innerText = "Your opponent bid " +bid1 + ". Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
+  document.getElementById("directions2").innerText = "Opponent bid " + bid1*multiplier1 + ". Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
   document.getElementById("updates").innerText= " "; 
   document.getElementById("finished2").className = "shown";
   document.querySelectorAll(".flop2").forEach(item => {
@@ -438,7 +459,7 @@ else if (bid2*multiplier2 > bid1*multiplier1) {
 else if (bid2*multiplier2 === bid1*multiplier1) {
   stage2 = 5;
   buys2 = 1;
-  document.getElementById("directions2").innerText = "You bid the same amount. Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
+  document.getElementById("directions2").innerText = "Equal bids, spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
   document.getElementById("updates").innerText= " "; 
   document.getElementById("finished2").className = "shown";
   document.querySelectorAll(".flop2").forEach(item => {
@@ -454,7 +475,7 @@ else if (bid2*multiplier2 === bid1*multiplier1) {
 }
 
 if (bid1*multiplier1 > bid2*multiplier2) {
-document.getElementById("directions2").innerText = "Your opponent bid " + bid1*multiplier1 + " which beat your bid of " + bid2*multiplier2; 
+document.getElementById("directions2").innerText = "Opponent bid " + bid1*multiplier1 + " which beat your bid of " + bid2*multiplier2; 
 document.getElementById("updates").innerText= " "; 
 socket.emit("finish2", {
   deck2: deck2,
@@ -482,47 +503,86 @@ document.getElementsByClassName("shopcards2")[7].addEventListener("click", takeI
 
 //Combine card listeners and functions
 document.getElementsByClassName("specialcards2")[2].addEventListener("click", playCombine);
+let offcombine = 0;
+
 function playCombine (){
-if (stage2 === 5 && specialDeck2.indexOf("Combine") > -1) {
-  if (parseInt(deck1[0])){value2 += parseInt(deck1[0])}
-  if (parseInt(deck1[1])){value2 += parseInt(deck1[1])} 
-  document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
-  specialDeck2.splice(specialDeck2.indexOf("Combine"), 1)
-  discard2.push("Combine");
+ if (stage2 === 5 && specialDeck2.indexOf("Combine") > -1 && offcombine === 0) {
+ if (parseInt(deck1[0])){value2 += parseInt(deck1[0])}
+ if (parseInt(deck1[1])){value2 += parseInt(deck1[1])} 
+ document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2+" buy(s)";  
+ specialDeck2.splice(specialDeck2.indexOf("Combine"), 1)
+ discard2.push("Combine");
+ document.getElementsByClassName("specialcards2")[2].style.backgroundColor = "#d3d3d3";
+ displaySpecialCards();  
+}
+
+if (stage2 === 5 && offcombine === 1) {
+  if (parseInt(deck1[0])){value2 -= parseInt(deck1[0])}
+  if (parseInt(deck1[1])){value2 -= parseInt(deck1[1])} 
+  document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)";  
+  discard2.splice(discard2.indexOf("Combine"), 1)
+  specialDeck2.push("Combine");
+  document.getElementsByClassName("specialcards2")[2].style.backgroundColor = "white";
   displaySpecialCards();  
-  console.log("playCombine2 ran")
+  offcombine = -1;
+ }
+offcombine += 1;
 }
-}
 
 
-  //Increase card listeners and functions
-  document.getElementsByClassName("specialcards2")[4].addEventListener("click", playIncrease);
+//Increase card listeners and functions
+document.getElementsByClassName("specialcards2")[4].addEventListener("click", playIncrease);
+let offincrease = 0;
 
-  function playIncrease (){
-    if (stage2 === 5 && specialDeck2.indexOf("Increase") > -1) {
-      if (parseInt(deck2[0])){value2 += parseInt(deck2[0])}
-      if (parseInt(deck2[1])){value2 += parseInt(deck2[1])} 
-      document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
-      specialDeck2.splice(specialDeck2.indexOf("Increase"), 1)
-      discard2.push("Increase");
-      displaySpecialCards();  
-      console.log("twoplayIncrease ran")
-    }
+function playIncrease (){
+    if (stage2 === 5 && specialDeck2.indexOf("Increase") > -1 && offincrease === 0) {
+    if (parseInt(deck2[0])){value2 += parseInt(deck2[0])}
+    if (parseInt(deck2[1])){value2 += parseInt(deck2[1])} 
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)";  
+    specialDeck2.splice(specialDeck2.indexOf("Increase"), 1)
+    discard2.push("Increase");
+    document.getElementsByClassName("specialcards2")[4].style.backgroundColor = "#d3d3d3";
+    displaySpecialCards();  
   }
+
+  if (stage2 === 5 && offincrease === 1) {
+    if (parseInt(deck2[0])){value2 -= parseInt(deck2[0])}
+    if (parseInt(deck2[1])){value2 -= parseInt(deck2[1])} 
+    document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)";  
+    discard2.splice(discard2.indexOf("Increase"), 1)
+    specialDeck2.push("Increase");
+    document.getElementsByClassName("specialcards2")[4].style.backgroundColor = "white";
+    displaySpecialCards();  
+    offincrease = -1;
+  }
+  offincrease += 1;
+}
 
 
   //Buy card listeners and functions
   document.getElementsByClassName("specialcards2")[3].addEventListener("click", playBuy);
-
-  function playBuy (){
-  if (stage2 === 5 && specialDeck2.indexOf("Buy") > -1) {
-    buys2 += 1;
+  let offbuy = 0;
+  
+   function playBuy (){
+   if (stage2 === 5 && specialDeck2.indexOf("Buy") > -1 && offbuy === 0) {
+     buys2 += 1;
+     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
+     specialDeck2.splice(specialDeck2.indexOf("Buy"), 1)
+     discard2.push("Buy");
+     document.getElementsByClassName("specialcards2")[3].style.backgroundColor = "#d3d3d3";
+     displaySpecialCards();  
+   }
+  
+   if (stage2 === 5 && offbuy === 1) {
+    buys2 -= 1;
     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
-    specialDeck2.splice(specialDeck2.indexOf("Buy"), 1)
-    discard2.push("Buy");
+    discard2.splice(discard2.indexOf("Buy"), 1)
+    specialDeck2.push("Buy");
+    document.getElementsByClassName("specialcards2")[3].style.backgroundColor = "white";
     displaySpecialCards();  
-    console.log("playBuy2 ran")
+    offbuy = -1;
   }
+  offbuy += 1;
   }
 
 
@@ -532,6 +592,9 @@ if (stage2 === 5 && specialDeck2.indexOf("Combine") > -1) {
 
   function sendFinish () {
     document.getElementById("finished2").className = "hidden";
+    document.getElementsByClassName("specialcards2")[2].style.backgroundColor = "white";
+    document.getElementsByClassName("specialcards2")[3].style.backgroundColor = "white";
+    document.getElementsByClassName("specialcards2")[4].style.backgroundColor = "white";
     socket.emit("finish2", {
       deck2: deck2,
       hand2: hand2
