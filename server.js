@@ -69,6 +69,14 @@ io.on("connection", function (socket){
       io.sockets.emit("deck2", data);
     })
 
+    socket.on("handtransfer1", function (data){
+      io.sockets.emit("handtransfer1", data);
+    })
+
+    socket.on("handtransfer2", function (data){
+      io.sockets.emit("handtransfer2", data);
+    })
+
     socket.on("bid1", function (data){
       io.sockets.emit("bid1", data);
       console.log(data)

@@ -27,8 +27,8 @@ justify-content: space-between;
 }
 
 #updates1 {
-    width: 500px;
-    height: 100px;
+    width: 450px;
+    height: 120px;
 }
 
 
@@ -42,6 +42,10 @@ justify-content: space-between;
     display: flex;
     margin: 0px 20px;
     flex-direction: column;
+}
+
+.center {
+    margin: 10px 0px;
 }
 
 #directions1 {
@@ -209,13 +213,14 @@ justify-content: space-between;
 #flopcontainer {
     display: flex;
     align-items: flex-end;
+    justify-content: space-between;
 }
 
 .flop1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
+    width: 100px;
     height: 190px;
     margin:15px 1px;
     border:  2px solid black;
@@ -228,7 +233,7 @@ justify-content: space-between;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 60px;
+    width: 100px;
     height: 190px;
     margin:15px 1px;
     border:  2px solid red;

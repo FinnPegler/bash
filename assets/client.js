@@ -89,6 +89,7 @@ socket.on("stage2", function(data){
 
 //flop received through server
 socket.on("deck2", function(data){
+  console.log("flop received from player 2")
     deck2[0] = data.deck2[0];
     deck2[1] = data.deck2[1];
     setTimeout(decksReceived, 200);
@@ -214,9 +215,16 @@ document.querySelectorAll(".cards1").forEach(item => {
     })
   })
 
+
+
+  socket.on("handtransfer2", function(data) {
+    hand2 = data.hand2;
+    })
+
+
   function secondStage(){
     takeSpecials(); 
-    displayFlop ();
+    setTimeout(displayFlop, 350)
 }
 
   
@@ -233,7 +241,12 @@ document.querySelectorAll(".cards1").forEach(item => {
       }
     })
     displaySpecialCards();
+    socket.emit("handtransfer1", {
+      hand1: hand1
+    })
+    console.log("handtransfer 1 sent")
 }
+
 
 
 //display flop
@@ -242,6 +255,9 @@ if (stage1 === 2 && stage2 === 2) {
   newRoundCounter = 0;
   flopsLeft = Math.floor(((deck1.length+1)/2) -1);
   console.log("display flop1 ran");
+  if (hand2.length <= 2){document.getElementById("card7").className = "hidden";}
+  if (hand2.length <= 1){document.getElementById("card6").className = "hidden";}
+  if (hand2.length <= 0){document.getElementById("card5").className = "hidden";}
   document.getElementById("card9").className = "flop1"
   document.getElementById("card10").className = "flop1"
   document.getElementById("card11").className = "flop2"
@@ -417,6 +433,7 @@ document.getElementById("ready1").addEventListener("click", stage1plus1);
 
 //function to move stage1 to 4 and send stage and hand data, then run player bid
 function stage1plus1 () {
+  console.log("stage1plus1: " + hand2)
   document.getElementsByClassName("specialcards1")[0].style.backgroundColor = "white";
   document.getElementsByClassName("specialcards1")[1].style.backgroundColor = "white";
   document.querySelectorAll(".cards1dark").forEach(item => {
@@ -449,6 +466,7 @@ function finishTimeout (){
     deck1: deck1,
     hand1: hand1,
 });
+console.log("Finish Timeout: " + hand2)
 }
 
 //calculate winning bid
@@ -527,11 +545,12 @@ document.getElementsByClassName("shopcards1")[7].addEventListener("click", takeI
 //Combine card listeners and functions
 document.getElementsByClassName("specialcards1")[2].addEventListener("click", playCombine);
 let offcombine = 0;
+let undocombine = 0;
 
 function playCombine (){
  if (stage1 === 5 && specialDeck1.indexOf("Combine") > -1 && offcombine === 0) {
- if (parseInt(deck2[0])){value1 += parseInt(deck2[0])}
- if (parseInt(deck2[1])){value1 += parseInt(deck2[1])} 
+ if (parseInt(deck2[0])){value1 += parseInt(deck2[0]);undocombine += parseInt(deck2[0])}
+ if (parseInt(deck2[1])){value1 += parseInt(deck2[1]);undocombine += parseInt(deck2[1])}
  document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1+" buy(s)";  
  specialDeck1.splice(specialDeck1.indexOf("Combine"), 1)
  discard1.push("Combine");
@@ -540,9 +559,9 @@ function playCombine (){
  setTimeout(function (){offcombine += 1;}, 20)
 }
 
-if (stage1 === 5 && offcombine === 1) {
-  if (parseInt(deck2[0])){value1 -= parseInt(deck2[0])}
-  if (parseInt(deck2[1])){value1 -= parseInt(deck2[1])} 
+if (stage1 === 5 && offcombine === 1 && undocombine <= value1) {
+  if (parseInt(deck2[0])){value1 -= parseInt(deck2[0]);undocombine -= parseInt(deck2[0])}
+  if (parseInt(deck2[1])){value1 -= parseInt(deck2[1]);undocombine -= parseInt(deck2[1])} 
   document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
   discard1.splice(discard1.indexOf("Combine"), 1)
   specialDeck1.push("Combine");
@@ -555,11 +574,12 @@ if (stage1 === 5 && offcombine === 1) {
 //Increase card listeners and functions
 document.getElementsByClassName("specialcards1")[4].addEventListener("click", playIncrease);
 let offincrease = 0;
+let undoincrease = 0;
 
 function playIncrease (){
     if (stage1 === 5 && specialDeck1.indexOf("Increase") > -1 && offincrease === 0) {
-    if (parseInt(deck1[0])){value1 += parseInt(deck1[0])}
-    if (parseInt(deck1[1])){value1 += parseInt(deck1[1])} 
+    if (parseInt(deck1[0])){value1 += parseInt(deck1[0]);undoincrease += parseInt(deck1[0])}
+    if (parseInt(deck1[1])){value1 += parseInt(deck1[1]);undoincrease += parseInt(deck1[1])}
     document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     specialDeck1.splice(specialDeck1.indexOf("Increase"), 1)
     discard1.push("Increase");
@@ -568,9 +588,9 @@ function playIncrease (){
     setTimeout(function (){offincrease+= 1;}, 20)
   }
 
-  if (stage1 === 5 && offincrease === 1) {
-    if (parseInt(deck1[0])){value1 -= parseInt(deck1[0])}
-    if (parseInt(deck1[1])){value1 -= parseInt(deck1[1])} 
+  if (stage1 === 5 && offincrease === 1 && undoincrease <= value1) {
+    if (parseInt(deck1[0])){value1 -= parseInt(deck1[0]);undoincrease -= parseInt(deck1[0])}
+    if (parseInt(deck1[1])){value1 -= parseInt(deck1[1]);undoincrease -= parseInt(deck1[1])}
     document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     discard1.splice(discard1.indexOf("Increase"), 1)
     specialDeck1.push("Increase");
@@ -595,7 +615,7 @@ let offbuy = 0;
    setTimeout(function (){offbuy += 1;}, 20)
  }
 
- if (stage1 === 5 && offbuy === 1) {
+ if (stage1 === 5 && offbuy === 1 && buys1 > 0) { 
   buys1 -= 1;
   document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)"; 
   discard1.splice(discard1.indexOf("Buy"), 1)
@@ -632,6 +652,7 @@ let offbuy = 0;
 
   //New flop function (resetting all parameters)
   function newFlop () {
+    console.log("Newflop hand2: " + hand2)
       if (hand2.length <= 2){document.getElementById("card7").className = "hidden";}
       if (hand2.length <= 1){document.getElementById("card6").className = "hidden";}
       if (hand2.length <= 0){document.getElementById("card5").className = "hidden";}
@@ -651,6 +672,9 @@ let offbuy = 0;
       offcombine = 0;
       offbuy = 0;
       offincrease = 0;
+      undocombine = 0;
+      undoincrease = 0;
+      undobuy = 0;
       socket.emit("deck1", {
         deck1: deck1
       }) 
@@ -712,6 +736,9 @@ function newRound (){
       offcombine = 0;
       offbuy = 0;
       offincrease = 0;
+      undocombine = 0;
+      undoincrease = 0;
+      undobuy = 0;
   }
 }
 
