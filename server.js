@@ -32,11 +32,8 @@ function newRound () {
   finishCounter = 0;
 }
 
-
 io.on("connection", function (socket){
     console.log("made socket connection", socket.id);
-
-    
 
     socket.on("start", function(data){
     io.sockets.emit("startResponse");

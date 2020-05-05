@@ -208,6 +208,7 @@ function displayHand () {
           let index = hand2.indexOf(item.innerText);    
           if (index > -1) {
           hand2.splice(index, 1);
+          sendHand2();
           addSendStage2();
           socket.emit("deck2", {
             deck2: deck2
@@ -224,9 +225,7 @@ function displayHand () {
 
 
     
-socket.on("handtransfer1", function(data) {
-  hand1 = data.hand1;
-})
+
 
 function specialTransfer (){
 socket.emit("specialtransfer2", {
@@ -262,11 +261,28 @@ socket.on("specialtransfer1", function(data) {
           }
         })
         displaySpecialCards();
-          socket.emit("handtransfer2", {
-            hand2: hand2,
-          })
-          console.log("handtransfer 2 sent")
+        sendHand2(); 
       }
+
+
+function sendHand2() {
+  console.log("handtransfer 2 sent")
+  socket.emit("handtransfer2", {
+    hand2: hand2,
+  })
+}
+
+socket.on("handtransfer1", function(data) {
+  hand1 = data.hand1;
+  document.getElementById("card3").className = "cards2";
+  document.getElementById("card2").className = "cards2";
+  document.getElementById("card1").className = "cards2";
+  document.getElementById("card4").className = "cards2";
+  if (hand1.length <= 3){document.getElementById("card4").className = "hidden";}
+  if (hand1.length <= 2){document.getElementById("card3").className = "hidden";}
+  if (hand1.length <= 1){document.getElementById("card2").className = "hidden";}
+  if (hand1.length <= 0){document.getElementById("card1").className = "hidden";}
+})
 
 
 
@@ -277,9 +293,6 @@ if (stage1 === 2 && stage2 === 2) {
   flopsLeft = Math.floor(((deck2.length+1)/2) -1);
   console.log(hand1);
   console.log("display flop2 ran");
-  if (hand1.length <= 2){document.getElementById("card3").className = "hidden";}
-  if (hand1.length <= 1){document.getElementById("card2").className = "hidden";}
-  if (hand1.length <= 0){document.getElementById("card1").className = "hidden";}
   document.getElementById("card9").className = "flop1";
   document.getElementById("card10").className = "flop1";
   document.getElementById("card11").className = "flop2";
@@ -318,6 +331,8 @@ if (stage1 === 2 && stage2 === 2) {
   }
 
   stage2 = 3;
+  console.log("hand 2 sent is: " + hand2)
+  sendHand2();
 } 
 }
 
@@ -542,7 +557,9 @@ socket.emit("finish2", {
 
 //reset remove arrays, call displayhands function, move to next stage (player buy phase)     
   remove2 = [];
-  displayHand ();   
+  displayHand ();  
+  console.log("hand 2 sent is: " + hand2)
+  sendHand2(); 
   document.getElementById("ready2").className = "hidden"                                                     
 }
 }
