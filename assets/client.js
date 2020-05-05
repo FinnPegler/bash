@@ -537,6 +537,7 @@ function playCombine (){
  discard1.push("Combine");
  document.getElementsByClassName("specialcards1")[2].style.backgroundColor = "#d3d3d3";
  displaySpecialCards();  
+ setTimeout(function (){offcombine += 1;}, 20)
 }
 
 if (stage1 === 5 && offcombine === 1) {
@@ -547,9 +548,8 @@ if (stage1 === 5 && offcombine === 1) {
   specialDeck1.push("Combine");
   document.getElementsByClassName("specialcards1")[2].style.backgroundColor = "white";
   displaySpecialCards();  
-  offcombine = -1;
+  offcombine = 0;
  }
-offcombine += 1;
 }
 
 //Increase card listeners and functions
@@ -565,6 +565,7 @@ function playIncrease (){
     discard1.push("Increase");
     document.getElementsByClassName("specialcards1")[4].style.backgroundColor = "#d3d3d3";
     displaySpecialCards();  
+    setTimeout(function (){offincrease+= 1;}, 20)
   }
 
   if (stage1 === 5 && offincrease === 1) {
@@ -575,9 +576,8 @@ function playIncrease (){
     specialDeck1.push("Increase");
     document.getElementsByClassName("specialcards1")[4].style.backgroundColor = "white";
     displaySpecialCards();  
-    offincrease = -1;
+    offincrease = 0;
   }
-  offincrease += 1;
 }
 
  //Buy card listeners and functions
@@ -592,6 +592,7 @@ let offbuy = 0;
    discard1.push("Buy");
    document.getElementsByClassName("specialcards1")[3].style.backgroundColor = "#d3d3d3";
    displaySpecialCards();  
+   setTimeout(function (){offbuy += 1;}, 20)
  }
 
  if (stage1 === 5 && offbuy === 1) {
@@ -601,9 +602,8 @@ let offbuy = 0;
   specialDeck1.push("Buy");
   document.getElementsByClassName("specialcards1")[3].style.backgroundColor = "white";
   displaySpecialCards();  
-  offbuy = -1;
+  offbuy = 0;
 }
-offbuy += 1;
 }
  
  
@@ -648,6 +648,9 @@ offbuy += 1;
       value2 = 0;
       finish1 = 0;
       buys1 = 0;
+      offcombine = 0;
+      offbuy = 0;
+      offincrease = 0;
       socket.emit("deck1", {
         deck1: deck1
       }) 
@@ -706,9 +709,9 @@ function newRound (){
       finish1 = 0;
       buys1 = 0;
       deck2 = [];
-      //console.log(deck1);
-      //console.log(discard1);
-      //console.log(hand1);
+      offcombine = 0;
+      offbuy = 0;
+      offincrease = 0;
   }
 }
 

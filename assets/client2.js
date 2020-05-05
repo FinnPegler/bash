@@ -515,6 +515,7 @@ function playCombine (){
  discard2.push("Combine");
  document.getElementsByClassName("specialcards2")[2].style.backgroundColor = "#d3d3d3";
  displaySpecialCards();  
+ setTimeout(function (){offcombine += 1;}, 20)
 }
 
 if (stage2 === 5 && offcombine === 1 && value2 > 9) {
@@ -525,9 +526,8 @@ if (stage2 === 5 && offcombine === 1 && value2 > 9) {
   specialDeck2.push("Combine");
   document.getElementsByClassName("specialcards2")[2].style.backgroundColor = "white";
   displaySpecialCards();  
-  offcombine = -1;
+  offcombine = 0;
  }
-offcombine += 1;
 }
 
 
@@ -544,6 +544,7 @@ function playIncrease (){
     discard2.push("Increase");
     document.getElementsByClassName("specialcards2")[4].style.backgroundColor = "#d3d3d3";
     displaySpecialCards();  
+    setTimeout(function (){offincrease+= 1;}, 20)
   }
 
   if (stage2 === 5 && offincrease === 1 && undoincrease < value2) {
@@ -554,9 +555,8 @@ function playIncrease (){
     specialDeck2.push("Increase");
     document.getElementsByClassName("specialcards2")[4].style.backgroundColor = "white";
     displaySpecialCards();  
-    offincrease = -1;
+    offincrease = -0;
   }
-  offincrease += 1;
 }
 
 
@@ -572,6 +572,7 @@ function playIncrease (){
      discard2.push("Buy");
      document.getElementsByClassName("specialcards2")[3].style.backgroundColor = "#d3d3d3";
      displaySpecialCards();  
+     setTimeout(function (){offbuy += 1;}, 20)
    }
   
    if (stage2 === 5 && offbuy === 1) { 
@@ -581,9 +582,8 @@ function playIncrease (){
     specialDeck2.push("Buy");
     document.getElementsByClassName("specialcards2")[3].style.backgroundColor = "white";
     displaySpecialCards();  
-    offbuy = -1;
+    offbuy = 0;
   }
-  offbuy += 1;
   }
 
 
@@ -629,6 +629,9 @@ function playIncrease (){
       value2 = 0;
       finish2 = 0;
       buys2 = 0;
+      offcombine = 0;
+      offbuy = 0;
+      offincrease = 0;
       socket.emit("deck2", {
         deck2: deck2
       }) 
@@ -687,6 +690,9 @@ function newRound (){
     finish2 = 0;
     buys2 = 0;
     deck1 = [];
+    offcombine = 0;
+    offbuy = 0;
+    offincrease = 0;
   }
 }
 

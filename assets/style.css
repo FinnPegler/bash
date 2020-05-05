@@ -73,10 +73,12 @@ justify-content: space-between;
 
 #hand1 {
     display: flex;
+    height: 120px;
 }
 
 #hand2 {
     display: flex;
+    height: 120px;
 }
 
 .cards1 {
