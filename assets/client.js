@@ -306,6 +306,7 @@ function displayFlop(){
 if (stage1 === 2 && stage2 === 2) {
   newRoundCounter = 0;
   flopsLeft = Math.floor(((deck1.length+1)/2) -1);
+  if (flopsLeft === -1) {flopsLeft = 0} 
   console.log("display flop1 ran");
   document.getElementById("card9").className = "flop1"
   document.getElementById("card10").className = "flop1"
@@ -828,6 +829,7 @@ function take8 () {
     value1 -= 20;
     document.getElementById("directions1").innerText = "Spend up to " + value1 + " in your shop in " + buys1 +" buy(s)";  
     displayShop();
+    if (arr1.indexOf("8") === -1) {document.getElementById("updates").innerText = "You win!"}
 }
 }
 

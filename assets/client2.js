@@ -274,10 +274,10 @@ function sendHand2() {
 
 socket.on("handtransfer1", function(data) {
   hand1 = data.hand1;
-  document.getElementById("card3").className = "cards2";
-  document.getElementById("card2").className = "cards2";
-  document.getElementById("card1").className = "cards2";
-  document.getElementById("card4").className = "cards2";
+  document.getElementById("card3").className = "cards1";
+  document.getElementById("card2").className = "cards1";
+  document.getElementById("card1").className = "cards1";
+  document.getElementById("card4").className = "cards1";
   if (hand1.length <= 3){document.getElementById("card4").className = "hidden";}
   if (hand1.length <= 2){document.getElementById("card3").className = "hidden";}
   if (hand1.length <= 1){document.getElementById("card2").className = "hidden";}
@@ -291,6 +291,7 @@ function displayFlop (){
 if (stage1 === 2 && stage2 === 2) {
   newRoundCounter = 0;
   flopsLeft = Math.floor(((deck2.length+1)/2) -1);
+  if (flopsLeft === -1) {flopsLeft = 0} 
   console.log(hand1);
   console.log("display flop2 ran");
   document.getElementById("card9").className = "flop1";
@@ -810,6 +811,7 @@ function take8 () {
     value2 -= 20;
     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
+    if (arr2.indexOf("8") === -1) {document.getElementById("updates").innerText = "You win!"}
 }
 }
 
