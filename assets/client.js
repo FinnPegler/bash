@@ -9,8 +9,8 @@
 //6 = Waiting for decks to be passed
 
 
-//var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
-var socket = io.connect("http://localhost:8080");
+var socket = io.connect("http://ec2-18-191-142-129.us-east-2.compute.amazonaws.com:3000");
+//var socket = io.connect("http://localhost:8080");
 
 var newgame = document.getElementById("newgame")
 let stage1 = 1;
