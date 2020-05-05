@@ -22,6 +22,7 @@ let finish2 = 0;
 let newRoundCounter = 0;
 let grab2 = 0;
 let specialDeck2 = [];
+let specialDeck1 = [];
 let flopsLeft = 0;
 
 socket.on("startResponse", function(data){
@@ -49,6 +50,7 @@ function startGame (){
     grab2 = 0;
     newRoundCounter = 0;
     specialDeck2 = ["Combine" , "Increase", "Double", "Buy", "Grab", "Increase", "Increase", "Combine"];
+    specialDeck1 = [];
     createFullDecks();
     createPlayerDecks();
     shuffle(arr2);
@@ -163,6 +165,14 @@ function displayHand () {
         {document.getElementById("redsc5").innerText = "Increase";document.getElementById("redsc5t").innerText = "#: " + (countInDeck(specialDeck2, "Increase"))}
       }
 
+      function displaySpecialCards1 () {
+        {document.getElementById("sc1").innerText = "Grab";document.getElementById("sc1t").innerText = "#: " + (countInDeck(specialDeck1, "Grab"))}
+        {document.getElementById("sc2").innerText = "Double";document.getElementById("sc2t").innerText = "#: " + (countInDeck(specialDeck1, "Double"))}
+        {document.getElementById("sc3").innerText = "Combine";document.getElementById("sc3t").innerText = "#: " + (countInDeck(specialDeck1, "Combine"))}
+        {document.getElementById("sc4").innerText = "Buy";document.getElementById("sc4t").innerText = "#: " + (countInDeck(specialDeck1, "Buy"))}
+        {document.getElementById("sc5").innerText = "Increase";document.getElementById("sc5t").innerText = "#: " + (countInDeck(specialDeck1, "Increase"))}
+    }
+
       function displayShop () {
         document.getElementById("redsh1").innerText = "4";document.getElementById("redsh1b").innerText = "💰: 6";document.getElementById("redsh1t").innerText = "#: " + (countInDeck(arr2, "4"))
         document.getElementById("redsh2").innerText = "6";document.getElementById("redsh2b").innerText = "💰: 10";document.getElementById("redsh2t").innerText = "#: " + (countInDeck(arr2, "6"))
@@ -205,11 +215,25 @@ socket.on("handtransfer1", function(data) {
   hand1 = data.hand1;
 })
 
+function specialTransfer (){
+socket.emit("specialtransfer2", {
+  specialDeck2: specialDeck2,
+  arr2: arr2
+})
+}
+
+socket.on("specialtransfer1", function(data) {
+  arr1 = data.arr1;
+  specialDeck1 = data.specialDeck1;
+  displaySpecialCards1 ();
+  //displayShop1 ();
+})
+
 
 
     function secondStage(){
         takeSpecials();
-        setTimeout(displayFlop, 350)
+        setTimeout(displayFlop, 600)
     }
 
  //function to take special cards from hand and put in special deck
@@ -226,7 +250,7 @@ socket.on("handtransfer1", function(data) {
         })
         displaySpecialCards();
           socket.emit("handtransfer2", {
-            hand2: hand2
+            hand2: hand2,
           })
           console.log("handtransfer 2 sent")
       }
@@ -281,6 +305,7 @@ if (stage1 === 2 && stage2 === 2) {
   }
 
   stage2 = 3;
+  displaySpecialCards1 ();
 } 
 }
 

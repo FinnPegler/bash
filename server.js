@@ -76,6 +76,14 @@ io.on("connection", function (socket){
     socket.on("handtransfer2", function (data){
       io.sockets.emit("handtransfer2", data);
     })
+    
+    socket.on("specialtransfer1", function (data){
+      io.sockets.emit("specialtransfer1", data);
+    })
+
+    socket.on("specialtransfer2", function (data){
+      io.sockets.emit("specialtransfer2", data);
+    })
 
     socket.on("bid1", function (data){
       io.sockets.emit("bid1", data);
