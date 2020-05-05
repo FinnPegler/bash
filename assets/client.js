@@ -64,7 +64,7 @@ function startGame (){
     finish1 = 0;
     grab1 = 0;
     newRoundCounter = 0;
-    specialDeck1 = ["Combine" , "Increase", "Double", "Buy", "Grab"];
+    specialDeck1 = ["Increase"]//, "Double", "Buy", "Grab"];
     specialDeck2 = [];
     createFullDecks();
     createPlayerDecks();
@@ -85,7 +85,7 @@ function addSendStage1 (){
 socket.on("stage2", function(data){
     stage2 = data.stage2;
     if (stage1 === 2){
-        setTimeout(secondStage,200);
+        setTimeout(secondStage, 500);
     }
 })
 
@@ -94,7 +94,7 @@ socket.on("deck2", function(data){
   console.log("flop received from player 2")
     deck2[0] = data.deck2[0];
     deck2[1] = data.deck2[1];
-    setTimeout(decksReceived, 200);
+    setTimeout(decksReceived, 500);
 })
 
 
@@ -179,7 +179,8 @@ function displaySpecialCards () {
     {document.getElementById("sc3").innerText = "Combine";document.getElementById("sc3t").innerText = "#: " + (countInDeck(specialDeck1, "Combine"))}
     {document.getElementById("sc4").innerText = "Buy";document.getElementById("sc4t").innerText = "#: " + (countInDeck(specialDeck1, "Buy"))}
     {document.getElementById("sc5").innerText = "Increase";document.getElementById("sc5t").innerText = "#: " + (countInDeck(specialDeck1, "Increase"))}
-}  
+    specialTransfer ();
+  }  
 
 function displaySpecialCards2 () {
   {document.getElementById("redsc1").innerText = "Grab";document.getElementById("redsc1t").innerText = "#: " + (countInDeck(specialDeck2, "Grab"))}
@@ -198,7 +199,19 @@ function displayShop () {
     document.getElementById("sh6").innerText = "Combine";document.getElementById("sh6b").innerText = "💰: 10";document.getElementById("sh6t").innerText = "#: " + (countInDeck(arr1, "Combine"))
     document.getElementById("sh7").innerText = "Buy";document.getElementById("sh7b").innerText = "💰: 12";document.getElementById("sh7t").innerText = "#: " + (countInDeck(arr1, "Buy"))
     document.getElementById("sh8").innerText = "Increase";document.getElementById("sh8b").innerText = "💰: 12";document.getElementById("sh8t").innerText = "#: " + (countInDeck(arr1, "Increase"))
-}  
+    specialTransfer ();
+  }  
+
+function displayShop2 () {
+  document.getElementById("redsh1").innerText = "4";document.getElementById("redsh1b").innerText = "💰: 6";document.getElementById("redsh1t").innerText = "#: " + (countInDeck(arr2, "4"))
+  document.getElementById("redsh2").innerText = "6";document.getElementById("redsh2b").innerText = "💰: 10";document.getElementById("redsh2t").innerText = "#: " + (countInDeck(arr2, "6"))
+  document.getElementById("redsh3").innerText = "8";document.getElementById("redsh3b").innerText = "💰: 20";document.getElementById("redsh3t").innerText = "#: " + (countInDeck(arr2, "8"))
+  document.getElementById("redsh4").innerText = "Grab";document.getElementById("redsh4b").innerText = "💰: 8";document.getElementById("redsh4t").innerText = "#: " + (countInDeck(arr2, "Grab"))
+  document.getElementById("redsh5").innerText = "Double";document.getElementById("redsh5b").innerText = "💰: 8";document.getElementById("redsh5t").innerText = "#: " + (countInDeck(arr2, "Double"))
+  document.getElementById("redsh6").innerText = "Combine";document.getElementById("redsh6b").innerText = "💰: 10";document.getElementById("redsh6t").innerText = "#: " + (countInDeck(arr2, "Combine"))
+  document.getElementById("redsh7").innerText = "Buy";document.getElementById("redsh7b").innerText = "💰: 12";document.getElementById("redsh7t").innerText = "#: " + (countInDeck(arr2, "Buy"))
+  document.getElementById("redsh8").innerText = "Increase";document.getElementById("redsh8b").innerText = "💰: 12";document.getElementById("redsh8t").innerText = "#: " + (countInDeck(arr2, "Increase"))
+}
 
 
 
@@ -219,13 +232,11 @@ document.querySelectorAll(".cards1").forEach(item => {
   }
   
           if (stage1 === 2 && stage2 === 2) {  
-            secondStage()
+            setTimeout(secondStage(), 500);
         }
       }
     })
   })
-
-
 
   socket.on("handtransfer2", function(data) {
     hand2 = data.hand2;
@@ -243,8 +254,8 @@ document.querySelectorAll(".cards1").forEach(item => {
       socket.on("specialtransfer2", function(data) {
         arr2 = data.arr2;
         specialDeck2 = data.specialDeck2;
-        displaySpecialCards1 ();
-        //displayShop1 ();
+        displaySpecialCards2 ();
+        displayShop2 ();
       })
 
 
@@ -320,7 +331,6 @@ if (stage1 === 2 && stage2 === 2) {
   })
 }
   stage1 = 3;
-  displaySpecialCards2 ();
 } 
 }
 

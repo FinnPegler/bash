@@ -49,7 +49,7 @@ function startGame (){
     finish2 = 0;
     grab2 = 0;
     newRoundCounter = 0;
-    specialDeck2 = ["Combine" , "Increase", "Double", "Buy", "Grab", "Increase", "Increase", "Combine"];
+    specialDeck2 = ["Increase"]//, "Double", "Buy", "Grab", "Increase", "Increase", "Combine"];
     specialDeck1 = [];
     createFullDecks();
     createPlayerDecks();
@@ -66,7 +66,7 @@ function startGame (){
 socket.on("stage1", function(data){
     stage1 = data.stage1;
     if (stage2 === 2){
-        setTimeout(secondStage,200);
+        setTimeout(secondStage,500);
         //secondStage();
     }
 })
@@ -76,7 +76,7 @@ socket.on("deck1", function(data){
   console.log("flop received from player 1")
     deck1[0] = data.deck1[0];
     deck1[1] = data.deck1[1];
-    setTimeout(decksReceived, 200);
+    setTimeout(decksReceived, 500);
 })
 
 //bid received through server
@@ -163,6 +163,7 @@ function displayHand () {
         {document.getElementById("redsc3").innerText = "Combine";document.getElementById("redsc3t").innerText = "#: " + (countInDeck(specialDeck2, "Combine"))}
         {document.getElementById("redsc4").innerText = "Buy";document.getElementById("redsc4t").innerText = "#: " + (countInDeck(specialDeck2, "Buy"))}
         {document.getElementById("redsc5").innerText = "Increase";document.getElementById("redsc5t").innerText = "#: " + (countInDeck(specialDeck2, "Increase"))}
+        specialTransfer ();
       }
 
       function displaySpecialCards1 () {
@@ -182,7 +183,19 @@ function displayHand () {
         document.getElementById("redsh6").innerText = "Combine";document.getElementById("redsh6b").innerText = "💰: 10";document.getElementById("redsh6t").innerText = "#: " + (countInDeck(arr2, "Combine"))
         document.getElementById("redsh7").innerText = "Buy";document.getElementById("redsh7b").innerText = "💰: 12";document.getElementById("redsh7t").innerText = "#: " + (countInDeck(arr2, "Buy"))
         document.getElementById("redsh8").innerText = "Increase";document.getElementById("redsh8b").innerText = "💰: 12";document.getElementById("redsh8t").innerText = "#: " + (countInDeck(arr2, "Increase"))
+        specialTransfer ();
       }
+
+      function displayShop1 () {
+        document.getElementById("sh1").innerText = "4";document.getElementById("sh1b").innerText = "💰: 6";document.getElementById("sh1t").innerText = "#: " + (countInDeck(arr1, "4"))
+        document.getElementById("sh2").innerText = "6";document.getElementById("sh2b").innerText = "💰: 10";document.getElementById("sh2t").innerText = "#: " + (countInDeck(arr1, "6"))
+        document.getElementById("sh3").innerText = "8";document.getElementById("sh3b").innerText = "💰: 20";document.getElementById("sh3t").innerText = "#: " + (countInDeck(arr1, "8"))
+        document.getElementById("sh4").innerText = "Grab";document.getElementById("sh4b").innerText = "💰: 8";document.getElementById("sh4t").innerText = "#: " + (countInDeck(arr1, "Grab"))
+        document.getElementById("sh5").innerText = "Double";document.getElementById("sh5b").innerText = "💰: 8";document.getElementById("sh5t").innerText = "#: " + (countInDeck(arr1, "Double"))
+        document.getElementById("sh6").innerText = "Combine";document.getElementById("sh6b").innerText = "💰: 10";document.getElementById("sh6t").innerText = "#: " + (countInDeck(arr1, "Combine"))
+        document.getElementById("sh7").innerText = "Buy";document.getElementById("sh7b").innerText = "💰: 12";document.getElementById("sh7t").innerText = "#: " + (countInDeck(arr1, "Buy"))
+        document.getElementById("sh8").innerText = "Increase";document.getElementById("sh8b").innerText = "💰: 12";document.getElementById("sh8t").innerText = "#: " + (countInDeck(arr1, "Increase"))
+    }  
 
 
    //Function to discard clicked card from Player2 hand
@@ -202,7 +215,7 @@ function displayHand () {
     }
 
           if (stage1 === 2 && stage2 === 2) {
-           secondStage()
+            setTimeout(secondStage(), 500);
             }
     
         }
@@ -226,7 +239,7 @@ socket.on("specialtransfer1", function(data) {
   arr1 = data.arr1;
   specialDeck1 = data.specialDeck1;
   displaySpecialCards1 ();
-  //displayShop1 ();
+  displayShop1 ();
 })
 
 
@@ -305,7 +318,6 @@ if (stage1 === 2 && stage2 === 2) {
   }
 
   stage2 = 3;
-  displaySpecialCards1 ();
 } 
 }
 
@@ -687,7 +699,7 @@ function playIncrease (){
       }) 
       console.log(deck2);
       stage2 = 6;
-      setTimeout(decksReceived, 800)
+      setTimeout(decksReceived, 500)
     }
 
 function decksReceived (){
