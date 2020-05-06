@@ -460,7 +460,6 @@ function playDouble (){
 document.querySelectorAll(".cards1").forEach(item => {
     item.addEventListener("click", event => {
       if (stage1 === 3 && item.className === ("cards1")) {
-          console.log("cards1 ran")
           bid1 += parseInt(item.innerText);
           remove1.push(item.innerText);
           socket.emit("bid1", {

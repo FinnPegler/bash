@@ -1,7 +1,7 @@
 p {
     margin: 0;
     text-align: center;
-    font-size: 18px;
+    font-size: 16px;
 }
 
 #newgame {
@@ -52,7 +52,7 @@ justify-content: space-between;
     font-size: 26px;
     font-weight: bold;
     text-align: center;
-    height: 70px;
+    height: 60px;
     width: 380px;
     margin: 15px 0px;
 }
@@ -61,7 +61,7 @@ justify-content: space-between;
     font-size: 26px;
     font-weight: bold;
     text-align: center;
-    height: 70px;
+    height: 60px;
     width: 380px;
     color: red;
     margin: 15px 0px;
@@ -120,7 +120,7 @@ justify-content: space-between;
     align-items: center;
     justify-content: center;
     width: 65px;
-    height: 110px;
+    height: 90px;
     margin:0px 2px 20px 2px;
     border:  2px solid black;
     border-radius: 10px;
@@ -136,7 +136,7 @@ justify-content: space-between;
     align-items: center;
     justify-content: space-between;
     width: 80px;
-    height: 110px;
+    height: 90px;
     margin:0px 5px 20px 5px;
     border:  2px dotted black;
     border-radius: 10px;
@@ -151,7 +151,7 @@ justify-content: space-between;
     align-items: center;
     justify-content: center;
     width: 65px;
-    height: 110px;
+    height: 90px;
     margin:0px 2px 20px 2px;
     border:  2px solid red;
     border-radius: 10px;
@@ -168,7 +168,7 @@ justify-content: space-between;
     align-items: center;
     justify-content: space-between;
     width: 80px;
-    height: 110px;
+    height: 90px;
     margin:0px 5px 20px 5px;
     border:  2px dotted red;
     border-radius: 10px;
