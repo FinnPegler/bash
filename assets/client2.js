@@ -66,18 +66,11 @@ function startGame (){
 socket.on("stage1", function(data){
     stage1 = data.stage1;
     if (stage2 === 2){
-        setTimeout(secondStage,500);
+        setTimeout(secondStage,900);
         //secondStage();
     }
 })
 
-//flop received through server
-socket.on("deck1", function(data){
-  console.log("flop received from player 1")
-    deck1[0] = data.deck1[0];
-    deck1[1] = data.deck1[1];
-    setTimeout(decksReceived, 500);
-})
 
 //bid received through server
 socket.on("bid1", function(data){
@@ -86,12 +79,6 @@ socket.on("bid1", function(data){
 })
 
 
-//stage4 received through server
-socket.on("stage4.1", function(data){
-    hand1 = data.hand1;
-    stage1 = data.stage1;
-    playerbid();
-})
 
 function addSendStage2 (){
     stage2 += 1;
@@ -210,9 +197,7 @@ function displayHand () {
           hand2.splice(index, 1);
           sendHand2();
           addSendStage2();
-          socket.emit("deck2", {
-            deck2: deck2
-        }) 
+          sendDeck2 ();
     }
 
           if (stage1 === 2 && stage2 === 2) {
@@ -223,9 +208,42 @@ function displayHand () {
     })
     })
 
-
+//send deck2 but don't display instantly on other screen  
+function sendDeck2 () {
+  socket.emit("deck2", {
+    deck2: deck2
+  }) 
+}
     
+//flop received through server
+socket.on("deck1", function(data){
+  console.log("flop received from player 1")
+    deck1[0] = data.deck1[0];
+    deck1[1] = data.deck1[1];
+    setTimeout(decksReceived, 900);
+})
 
+
+//send Deck and show instantly on other screen
+function sendDeck2Instant () {
+  socket.emit("deck2Instant", {
+    deck2: deck2
+  }) 
+}
+
+//flop received and displayed through server
+socket.on("deck1Instant", function(data){
+  console.log("flop received and shown from player 2")
+    deck1[0] = data.deck1[0];
+    deck1[1] = data.deck1[1];
+    document.getElementById("card9").className = "flop1"
+    document.getElementById("card10").className = "flop1" 
+    if (deck1[0]){document.getElementById("card9").innerText = deck1[0]}
+    if (deck1[1]){document.getElementById("card10").innerText = deck1[1]}
+    if (!deck1[0]){document.getElementById("card9").className = "hidden"}
+    if (!deck1[1]){document.getElementById("card10").className = "hidden"} 
+})
+    
 
 function specialTransfer (){
 socket.emit("specialtransfer2", {
@@ -292,7 +310,6 @@ if (stage1 === 2 && stage2 === 2) {
   newRoundCounter = 0;
   flopsLeft = Math.floor(((deck2.length+1)/2) -1);
   if (flopsLeft === -1) {flopsLeft = 0} 
-  console.log(hand1);
   console.log("display flop2 ran");
   document.getElementById("card9").className = "flop1";
   document.getElementById("card10").className = "flop1";
@@ -316,7 +333,6 @@ if (stage1 === 2 && stage2 === 2) {
   }
 
   if (!hand2[0]) {
-    console.log("!hand2[0] part of display flop ran");
     document.getElementById("directions2").innerText = "Your hand is empty, you cannot bid";
     stage2 = 4;
     socket.emit("finish2", {
@@ -325,6 +341,7 @@ if (stage1 === 2 && stage2 === 2) {
   });
     socket.emit("handempty2");
     console.log("sending empty hand 2 command")
+
     socket.emit("stage4.2", {
       stage2:stage2,
       hand2: hand2
@@ -332,7 +349,6 @@ if (stage1 === 2 && stage2 === 2) {
   }
 
   stage2 = 3;
-  console.log("hand 2 sent is: " + hand2)
   sendHand2();
 } 
 }
@@ -341,11 +357,11 @@ if (stage1 === 2 && stage2 === 2) {
 
 //Eventlistener for Grab card 
 document.getElementsByClassName("specialcards2")[0].addEventListener("click", playGrab); 
-let offgrab = 0;
 
 //Play Grab card - remove from Special cards and put in discard1 
 function playGrab () {
-  if (stage2 === 3 && specialDeck2.indexOf("Grab") > -1 && offgrab === 0){
+  if (stage2 === 3 && specialDeck2.indexOf("Grab") > -1 && grab2 === 0){
+    console.log("Grab part1 ran");
     grab2 = 1;
     specialDeck2.splice(specialDeck2.indexOf("Grab"), 1)
     discard2.push("Grab")
@@ -353,29 +369,32 @@ function playGrab () {
     displaySpecialCards();
   }
 
-  if (stage2 === 3 && offgrab === 1){
+  else if (stage2 === 3 && grab2 === 1){
+    console.log("Grab part2 ran");
     grab2 = 1;
-    offgrab = -1;
     discard2.splice(discard2.indexOf("Grab"), 1);
     specialDeck2.push("Grab");
     document.getElementsByClassName("specialcards2")[0].style.backgroundColor = "white";
     displaySpecialCards();
+    grab2 = 0;
       }  
-    offgrab += 1;
 } 
 
 
 //Grab card - Function to take special card from flop and place in special cards
 document.querySelectorAll(".flop2").forEach(item => {
   item.addEventListener("click", event => {
-   if (item.innerText === "Double" ||item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
-          deck2.splice(deck2.indexOf(item.innerText), 1);
+    if (stage2 === 3 && grab2 === 1) {
+    if (item.innerText === "Double" ||item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
+          deck2[deck2.indexOf(item.innerText)] = undefined;
           specialDeck2.push(item.innerText);
           item.className = "hidden";
           document.getElementsByClassName("specialcards2")[0].style.backgroundColor = "white";
           displaySpecialCards();
-          console.log(`Grabbed ${item.innerText} Card`);
-   }
+          sendDeck2Instant ();
+          grab2 = 0;
+    }
+    }
   })
 })
 
@@ -384,13 +403,13 @@ document.querySelectorAll(".flop2").forEach(item => {
     item.addEventListener("click", event => {
       if (stage2 === 3 && grab2 === 1 &&  item.innerText === ("Grab")) {
         grab2 = 0;
-        deck2.splice(deck2.indexOf("Grab"), 1)
+        deck2[deck2.indexOf("Grab")] = undefined;
         specialDeck2.push("Grab");
         specialDeck2.push("Grab");
         item.className = "hidden";
         document.getElementsByClassName("specialcards2")[0].style.backgroundColor = "white";
         displaySpecialCards();
-        console.log("Grabbed Grab Card");
+        sendDeck2Instant ();
       }
     })
   })
@@ -398,9 +417,8 @@ document.querySelectorAll(".flop2").forEach(item => {
 //Eventlistener for double card
 document.getElementsByClassName("specialcards2")[1].addEventListener("click", playDouble);
 let offdouble = 0;
-
 function playDouble (){
-  if (stage2 === 3 && offdouble === 0 && specialDeck2.indexOf("Double") > -1){
+  if (stage2 === 3 && multiplier2 === 1 && specialDeck2.indexOf("Double") > -1){
     multiplier2 = 2;
     specialDeck2.splice(specialDeck2.indexOf("Double"), 1);
     discard2.push("Double");
@@ -412,9 +430,8 @@ function playDouble (){
     });
   }
 
-  if (stage2 === 3 && offdouble === 1){
+  else if (stage2 === 3 && multiplier2 === 2){
     multiplier2 = 1;
-    offdouble = -1;
     discard2.splice(discard2.indexOf("Double"), 1)
     specialDeck2.push("Double");
     document.getElementsByClassName("specialcards2")[1].style.backgroundColor = "white";
@@ -424,7 +441,6 @@ function playDouble (){
       multiplier2: multiplier2
     });
   }
-  offdouble += 1;
 }
 
 
@@ -473,7 +489,6 @@ if (stage2 === 3 && item.className === ("cards2dark")) {
     document.querySelectorAll(".cards2dark").forEach(item => {
     item.className = "cards2"})
     stage2 = 4;
-    //if (!hand2[0]){stage2 = 4;}
     socket.emit("stage4.2", {
         stage2: stage2,
         hand2: hand2
@@ -481,6 +496,14 @@ if (stage2 === 3 && item.className === ("cards2dark")) {
     playerbid()
   }
 
+
+  
+//stage4 received through server
+socket.on("stage4.1", function(data){
+  hand1 = data.hand1;
+  stage1 = data.stage1;
+  playerbid();
+})
 
 //remove bids from hand, calculate winning bid, move to next stage
 function playerbid (){
@@ -506,7 +529,7 @@ function finishTimeout (){
 
 //calculate winning bid
 if (bid1 === 0 & bid2 === 0){
-  setTimeout(finishTimeout, 500)
+  setTimeout(finishTimeout, 900)
   document.getElementById("updates").innerText= "No one bid, moving to next phase in 1 second";
   document.getElementById("finished2").className = "hidden"; 
 }
@@ -521,9 +544,9 @@ else if (bid2*multiplier2 > bid1*multiplier1) {
     if (item.innerText === "Grab" ||item.innerText === "Double" ||item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){  
       specialDeck2.push(item.innerText);
       item.className = "hidden";
-      console.log(`Grabbed ${item.innerText} Card`);
       let index = deck2.indexOf(item.innerText);     
       deck2[index] = undefined;
+      sendDeck2Instant();
     }
    })
   displaySpecialCards();
@@ -539,9 +562,9 @@ else if (bid2*multiplier2 === bid1*multiplier1) {
     if (item.innerText === "Grab" ||item.innerText === "Double" || item.innerText === "Buy" ||item.innerText === "Combine" ||item.innerText === "Increase"){
            specialDeck2.push(item.innerText);
            item.className = "hidden";
-           console.log(`Grabbed ${item.innerText} Card`);
            let index = deck2.indexOf(item.innerText);     
            deck2[index] = undefined;
+           sendDeck2Instant();
     }
   })
   displaySpecialCards();
@@ -559,7 +582,6 @@ socket.emit("finish2", {
 //reset remove arrays, call displayhands function, move to next stage (player buy phase)     
   remove2 = [];
   displayHand ();  
-  console.log("hand 2 sent is: " + hand2)
   sendHand2(); 
   document.getElementById("ready2").className = "hidden"                                                     
 }
@@ -620,7 +642,6 @@ function playIncrease (){
     document.getElementsByClassName("specialcards2")[4].style.backgroundColor = "#d3d3d3";
     displaySpecialCards();  
     setTimeout(function (){offincrease+= 1;}, 20)
-    console.log(undoincrease);
   }
 
   if (stage2 === 5 && offincrease === 1 && undoincrease <= value2) {
@@ -632,7 +653,6 @@ function playIncrease (){
     document.getElementsByClassName("specialcards2")[4].style.backgroundColor = "white";
     displaySpecialCards();  
     offincrease = 0;
-    console.log(undoincrease);
   }
 }
 
@@ -689,15 +709,13 @@ function playIncrease (){
   
   //New flop function (resetting all parameters)
   function newFlop () {
-    if (hand1.length <= 2){document.getElementById("card3").className = "hidden";}
-    if (hand1.length <= 1){document.getElementById("card2").className = "hidden";}
-    if (hand1.length <= 0){document.getElementById("card1").className = "hidden";}
       console.log("newflop2 ran");
+      document.getElementById("card4").className = "card1";
       document.getElementById("finished2").className = "hidden";
       discard2.push(deck2.shift());
       discard2.push(deck2.shift());
+      sendDeck2 ();
       stage1 = 2;
-      stage2 = 2;
       bid1 = 0;
       bid2 = 0;
       multiplier1 = 1;
@@ -706,18 +724,15 @@ function playIncrease (){
       value2 = 0;
       finish2 = 0;
       buys2 = 0;
+      grab2 = 0;
       offcombine = 0;
       offbuy = 0;
       offincrease = 0;
       undocombine = 0;
       undoincrease = 0;
       undobuy = 0;
-      socket.emit("deck2", {
-        deck2: deck2
-      }) 
-      console.log(deck2);
       stage2 = 6;
-      setTimeout(decksReceived, 500)
+      setTimeout(decksReceived, 900)
     }
 
 function decksReceived (){
@@ -773,6 +788,7 @@ function newRound (){
     offcombine = 0;
     offbuy = 0;
     offincrease = 0;
+    grab2 = 0;
     undocombine = 0;
     undoincrease = 0;
     undobuy = 0;

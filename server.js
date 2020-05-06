@@ -66,6 +66,16 @@ io.on("connection", function (socket){
       io.sockets.emit("deck2", data);
     })
 
+    socket.on("deck1Instant", function (data){
+      io.sockets.emit("deck1Instant", data);
+      console.log("passing instant deck1")
+    })
+
+    socket.on("deck2Instant", function (data){
+      io.sockets.emit("deck2Instant", data);
+      console.log("passing instant deck2")
+    })
+
     socket.on("handtransfer1", function (data){
       io.sockets.emit("handtransfer1", data);
     })
@@ -92,13 +102,16 @@ io.on("connection", function (socket){
       console.log(data)
     })
 
+
+//sends hand and stage data and runs player bid, which only fires once both stage4.1 and stage4.2 have been sent
     socket.on("stage4.1", function (data){
       io.sockets.emit("stage4.1", data);
     })
-
+//sends hand and stage data and runs player bid, which only fires once both stage4.1 and stage4.2 have been sent
     socket.on("stage4.2", function (data){
       io.sockets.emit("stage4.2", data);
     })
+
 
     //function that listens for a signal from player 1 that his buy phase is over. 
 //If player 2 has previously signalled then finish command emitted which brings a new flop
