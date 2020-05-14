@@ -164,11 +164,11 @@ function displayHand () {
       function displayShop () {
         document.getElementById("redsh1").innerText = "4";document.getElementById("redsh1b").innerText = "💰: 6";document.getElementById("redsh1t").innerText = "#: " + (countInDeck(arr2, "4"))
         document.getElementById("redsh2").innerText = "6";document.getElementById("redsh2b").innerText = "💰: 10";document.getElementById("redsh2t").innerText = "#: " + (countInDeck(arr2, "6"))
-        document.getElementById("redsh3").innerText = "8";document.getElementById("redsh3b").innerText = "💰: 20";document.getElementById("redsh3t").innerText = "#: " + (countInDeck(arr2, "8"))
+        document.getElementById("redsh3").innerText = "8";document.getElementById("redsh3b").innerText = "💰: 24";document.getElementById("redsh3t").innerText = "#: " + (countInDeck(arr2, "8"))
         document.getElementById("redsh4").innerText = "Grab";document.getElementById("redsh4b").innerText = "💰: 8";document.getElementById("redsh4t").innerText = "#: " + (countInDeck(arr2, "Grab"))
-        document.getElementById("redsh5").innerText = "Double";document.getElementById("redsh5b").innerText = "💰: 8";document.getElementById("redsh5t").innerText = "#: " + (countInDeck(arr2, "Double"))
+        document.getElementById("redsh5").innerText = "Double";document.getElementById("redsh5b").innerText = "💰: 10";document.getElementById("redsh5t").innerText = "#: " + (countInDeck(arr2, "Double"))
         document.getElementById("redsh6").innerText = "Combine";document.getElementById("redsh6b").innerText = "💰: 10";document.getElementById("redsh6t").innerText = "#: " + (countInDeck(arr2, "Combine"))
-        document.getElementById("redsh7").innerText = "Buy";document.getElementById("redsh7b").innerText = "💰: 12";document.getElementById("redsh7t").innerText = "#: " + (countInDeck(arr2, "Buy"))
+        document.getElementById("redsh7").innerText = "Buy";document.getElementById("redsh7b").innerText = "💰: 6";document.getElementById("redsh7t").innerText = "#: " + (countInDeck(arr2, "Buy"))
         document.getElementById("redsh8").innerText = "Increase";document.getElementById("redsh8b").innerText = "💰: 12";document.getElementById("redsh8t").innerText = "#: " + (countInDeck(arr2, "Increase"))
         specialTransfer ();
       }
@@ -176,11 +176,11 @@ function displayHand () {
       function displayShop1 () {
         document.getElementById("sh1").innerText = "4";document.getElementById("sh1b").innerText = "💰: 6";document.getElementById("sh1t").innerText = "#: " + (countInDeck(arr1, "4"))
         document.getElementById("sh2").innerText = "6";document.getElementById("sh2b").innerText = "💰: 10";document.getElementById("sh2t").innerText = "#: " + (countInDeck(arr1, "6"))
-        document.getElementById("sh3").innerText = "8";document.getElementById("sh3b").innerText = "💰: 20";document.getElementById("sh3t").innerText = "#: " + (countInDeck(arr1, "8"))
+        document.getElementById("sh3").innerText = "8";document.getElementById("sh3b").innerText = "💰: 24";document.getElementById("sh3t").innerText = "#: " + (countInDeck(arr1, "8"))
         document.getElementById("sh4").innerText = "Grab";document.getElementById("sh4b").innerText = "💰: 8";document.getElementById("sh4t").innerText = "#: " + (countInDeck(arr1, "Grab"))
-        document.getElementById("sh5").innerText = "Double";document.getElementById("sh5b").innerText = "💰: 8";document.getElementById("sh5t").innerText = "#: " + (countInDeck(arr1, "Double"))
+        document.getElementById("sh5").innerText = "Double";document.getElementById("sh5b").innerText = "💰: 10";document.getElementById("sh5t").innerText = "#: " + (countInDeck(arr1, "Double"))
         document.getElementById("sh6").innerText = "Combine";document.getElementById("sh6b").innerText = "💰: 10";document.getElementById("sh6t").innerText = "#: " + (countInDeck(arr1, "Combine"))
-        document.getElementById("sh7").innerText = "Buy";document.getElementById("sh7b").innerText = "💰: 12";document.getElementById("sh7t").innerText = "#: " + (countInDeck(arr1, "Buy"))
+        document.getElementById("sh7").innerText = "Buy";document.getElementById("sh7b").innerText = "💰: 6";document.getElementById("sh7t").innerText = "#: " + (countInDeck(arr1, "Buy"))
         document.getElementById("sh8").innerText = "Increase";document.getElementById("sh8b").innerText = "💰: 12";document.getElementById("sh8t").innerText = "#: " + (countInDeck(arr1, "Increase"))
     }  
 
@@ -820,11 +820,11 @@ function take6 () {
 }
 
 function take8 () {
-  if (value2 >= 20 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "8") > 0){
+  if (value2 >= 24 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "8") > 0){
     arr2.splice(arr2.indexOf("8"), 1)
     discard2.push("8")
     buys2 -= 1;
-    value2 -= 20;
+    value2 -= 24;
     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
     if (arr2.indexOf("8") === -1) {document.getElementById("updates").innerText = "You win!"}
@@ -844,11 +844,11 @@ function takeGrab () {
 }
 
 function takeDouble () {
-  if (value2 >= 8 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Double") > 0){
+  if (value2 >= 10 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Double") > 0){
     arr2.splice(arr2.indexOf("Double"), 1)
     specialDeck2.push("Double")
     buys2 -= 1;
-    value2 -= 8;
+    value2 -= 10;
     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
     displaySpecialCards();
@@ -869,11 +869,11 @@ function takeCombine () {
 }
 
 function takeBuy () {
-  if (value2 >= 12 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Buy") > 0){
+  if (value2 >= 6 && buys2 > 0 && stage2 === 5 && countInDeck(arr2, "Buy") > 0){
     arr2.splice(arr2.indexOf("Buy"), 1)
     specialDeck2.push("Buy")
     buys2 -= 1;
-    value2 -= 12;
+    value2 -= 6;
     document.getElementById("directions2").innerText = "Spend up to " + value2 + " in your shop in " + buys2 +" buy(s)"; 
     displayShop();
     displaySpecialCards();
